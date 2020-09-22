@@ -332,7 +332,7 @@ $(document).ready(function(){
 		format: 'mm/dd/yyyy'
 	}).on('changeDate', function(){
 		var pdate = $(this).val();
-		var d = {"periodate": pdate};
+		var d = {"periodate": pdate, "branch_id": userbranch};
 
 		if(access_level == 0){
 			var branch_id = $("select#period_branch").select2('val');

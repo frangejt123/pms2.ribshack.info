@@ -84,12 +84,25 @@ class Weekview extends CI_Controller {
 		$convertion = $this->modConversion->getAll($param)->result_array();
 		$pms = $this->modProductMovement->getTotal($param)->result_array();
 
-		$totalRecords = $this->modConversion->getAll($param)->num_rows();
-		$totalRecordwithFilter = $totalRecords;
-
-		$pmstotal = [];
-
-		$datedataarray = [];
+		/*
+		 var dataSet = [{
+			  "Latitude": 18.00,
+			  "Longitude": 23.00,
+			  "Name": "Pune"
+			}, {
+			  "Latitude": 14.00,
+			  "Longitude": 24.00,
+			  "Name": "Mumbai"
+			}, {
+			  "Latitude": 34.004654,
+			  "Longitude": -4.005465,
+			  "Name": "Delhi"
+			}, {
+			  "Latitude": 23.004564,
+			  "Longitude": 23.007897,
+			  "Name": "Jaipur"
+		}];
+		 */
 
 		$period = new DatePeriod(
 			new DateTime($param["datefrom"]),
@@ -97,9 +110,19 @@ class Weekview extends CI_Controller {
 			new DateTime($param["dateto"]. ' 23:59:59')
 		);
 
+		$header = [];
+
+		$totalRecords = $this->modConversion->getAll($param)->num_rows();
+		$totalRecordwithFilter = $totalRecords;
+
+//		$pmstotal = [];
+
+		$datedataarray = [];
+
 		foreach($pms as $ind => $row){
 			$datedataarray[$row["product_id"]]['desc'] = $row["description"];
-			$datedataarray[$row["product_id"]]['date'][$row["date"]] = $row["pos_total"];
+			$dateformat = date('Ymd', strtotime($row["date"]));
+			$datedataarray[$row["product_id"]]['date'][$dateformat] = $row["pos_total"];
 		}
 
 		$datatotal = [];
@@ -112,22 +135,27 @@ class Weekview extends CI_Controller {
 			}
 
 			foreach ($period as $date) {
-				$dateStr = $date->format('Y-m-d');
+				$dateStr = $date->format('Ymd');
 				if(!array_key_exists($dateStr, $row['date'])){
 					$datedataarray[$ind]['date'][$dateStr] = 0;
 				}
 			}
 		}
 
+		foreach($datedataarray as $ind => $row){
+			ksort($row['date']);
+			$datedataarray[$ind]['date'] = $row['date'];
+		}
+
 		$data = [];
 		foreach($datedataarray as $ind => $row){
 			$data[$ind] = [];
 			array_push($data[$ind], $row['desc']);
-			array_push($data[$ind], $datatotal[$ind]);
+			array_push($data[$ind], number_format($datatotal[$ind], 2));
 			array_push($data[$ind], number_format($datatotal[$ind] / 7, 2));
 
 			foreach($row['date'] as $ind2 => $row2){
-				array_push($data[$ind], $row2);
+				array_push($data[$ind], number_format($row2, 2));
 			}
 
 		}
