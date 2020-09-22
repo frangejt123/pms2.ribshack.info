@@ -11,7 +11,12 @@ class ModProductmovement extends CI_Model {
                 "id" => "product_movement.id",
                 "period_id" => "product_movement.period_id",
                 "product_id" => "product_movement.product_id",
-                "pos_sold" => "product_movement.pos_sold",
+                "pos1" => "product_movement.pos1",
+				"pos2" => "product_movement.pos2",
+				"pos3" => "product_movement.pos3",
+				"pos4" => "product_movement.pos4",
+				"pos5" => "product_movement.pos5",
+				"pos_total" => "product_movement.pos_total",
                 "beginning" => "product_movement.beginning",
                 "ending" => "product_movement.ending",
                 "delivery" => "product_movement.delivery",
@@ -106,7 +111,6 @@ class ModProductmovement extends CI_Model {
         return $result;
     }
 
-
     function delete($param) {
 
         $result = array();
@@ -130,6 +134,26 @@ class ModProductmovement extends CI_Model {
 		$this->db->where("period_id", $param["period_id"]);
 		$this->db->where("product_id", $param["product_id"]);
 
+		$query = $this->db->get();
+
+		return $query;
+	}
+
+	function getTotal($param){
+		$this->db->select("product_id, SUM(pos_total) as pos_total, period.date, product.description");
+		$this->db->from("product_movement");
+		$this->db->join('period', 'period.id = product_movement.period_id');
+		$this->db->join('product', 'product.id = product_movement.product_id');
+		$this->db->group_by("product_id");
+		if(!isset($param["datemerge"])){
+			$this->db->group_by("period.date");
+		}
+		if(isset($param["branch_id"])){
+			$this->db->where('period.branch_id =', $param["branch_id"]);
+		}
+		$this->db->where('product.parent_id =', NULL);
+		$this->db->where('period.date >=', $param["datefrom"]);
+		$this->db->where('period.date <=', $param["dateto"]);
 		$query = $this->db->get();
 
 		return $query;

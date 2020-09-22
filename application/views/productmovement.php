@@ -34,92 +34,81 @@
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <div class="wrapper">
-  <header class="main-header">
-    <!-- Logo -->
-    <a href="<?php echo base_url(); ?>assets/index2.html" class="logo">
-      <!-- mini logo for sidebar mini 50x50 pixels -->
-      <span class="logo-mini"><b>RGC</b></span>
-      <!-- logo for regular state and mobile devices -->
-      <span class="logo-lg"><b>RIBSHACK</b></span>
-    </a>
-    <!-- Header Navbar: style can be found in header.less -->
-    <nav class="navbar navbar-static-top">
-      <!-- Sidebar toggle button-->
-      <a href="<?php echo base_url(); ?>assets/#" class="sidebar-toggle" data-toggle="push-menu" role="button">
-        <span class="sr-only">Toggle navigation</span>
-      </a>
 
-      <div class="navbar-custom-menu">
-        <ul class="nav navbar-nav">
-          <!-- User Account: style can be found in dropdown.less -->
-          <li class="dropdown user user-menu">
-            <a href="<?php echo base_url(); ?>assets/#" class="dropdown-toggle" data-toggle="dropdown">
-              <img src="<?php echo base_url(); ?>assets/dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
-              <span class="hidden-xs">Justine Frange</span>
-            </a>
-            <ul class="dropdown-menu">
-              <!-- Menu Footer-->
-              <li class="user-footer">
-                <div class="pull-left">
-                  <!-- <a href="<?php //echo base_url(); ?>assets/#" class="btn btn-default btn-flat">Profile</a> -->
-                </div>
-                <div class="pull-right">
-                  <a href="javascript:void(0)" id="sign_out_btn" class="btn btn-default btn-flat">Sign out</a>
-                </div>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </div>
-    </nav>
-  </header>
-  <!-- Left side column. contains the logo and sidebar -->
-  <aside class="main-sidebar">
-    <!-- sidebar: style can be found in sidebar.less -->
-    <section class="sidebar">
-      <!-- Sidebar user panel -->
-      <div class="user-panel">
-        <div class="pull-left image">
-          <img src="<?php echo base_url(); ?>assets/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
-        </div>
-        <div class="pull-left info">
-          <p>Justine Frange</p>
-        </div>
-      </div>
-      <!-- /.search form -->
-      <!-- sidebar menu: : style can be found in sidebar.less -->
-      <ul class="sidebar-menu" data-widget="tree">
-        <li class="header">MAIN NAVIGATION</li>
-        <!-- <li>
-          <a href="<?php //echo base_url(); ?>">
-            <i class="fa fa-dashboard"></i> <span>Dashboard</span>
-          </a>
-        </li> -->
-        <li class='active'>
-          <a href="javascript:void(0)">
-            <i class="fa fa-bar-chart"></i> <span>Product Movement</span>
-          </a>
-        </li>
-        <li>
-          <a href="<?php echo base_url(); ?>index.php/report">
-            <i class="fa fa-file-text-o"></i> <span>Reports</span>
-          </a>
-        </li>
-        <li class="header"></li>
-        <li><a href="<?php echo base_url(); ?>index.php/product"><i class="fa fa-cubes"></i> <span>Product</span></a></li>
-        <li><a href="<?php echo base_url(); ?>index.php/uom"><i class="fa fa-sliders"></i> <span>Unit of Measurement</span></a></li>
-        <?php
-          if($_SESSION["rgc_access_level"] == 0){
-              echo '<li><a href="'.base_url().'index.php/userlist">
-                  <i class="fa fa-users"></i> <span>User List</span></a></li>';
-          }
-        ?>
-        <li class="header"></li>
-        <li><a href="#" id="changepass_btn"><i class="fa fa-key"></i> <span>Change Password</span></a></li>
-      </ul>
-    </section>
-    <!-- /.sidebar -->
-  </aside>
+<header class="main-header">
+	<!-- Logo -->
+	<a href="<?php echo base_url(); ?>assets/index2.html" class="logo">
+		<!-- mini logo for sidebar mini 50x50 pixels -->
+		<span class="logo-mini"><b>RGC</b></span>
+		<!-- logo for regular state and mobile devices -->
+		<span class="logo-lg"><b>RIBSHACK</b></span>
+	</a>
+	<!-- Header Navbar: style can be found in header.less -->
+	<nav class="navbar navbar-static-top">
+		<!-- Sidebar toggle button-->
+		<a href="<?php echo base_url(); ?>assets/#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+			<span class="sr-only">Toggle navigation</span>
+		</a>
+
+		<div class="navbar-custom-menu">
+			<ul class="nav navbar-nav">
+				<!-- User Account: style can be found in dropdown.less -->
+				<li class="dropdown user user-menu">
+					<a href="<?php echo base_url(); ?>assets/#" class="dropdown-toggle" data-toggle="dropdown">
+						<span class="hidden-xs">USER</span>
+					</a>
+					<ul class="dropdown-menu">
+						<!-- Menu Footer-->
+						<li class="user-footer">
+							<div class="pull-left">
+								<!-- <a href="<?php //echo base_url(); ?>assets/#" class="btn btn-default btn-flat">Profile</a> -->
+							</div>
+							<div class="pull-right">
+								<a href="javascript:void(0)" id="sign_out_btn" class="btn btn-default btn-flat">Sign out</a>
+							</div>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+	</nav>
+</header>
+<!-- Left side column. contains the logo and sidebar -->
+<aside class="main-sidebar">
+	<!-- sidebar: style can be found in sidebar.less -->
+	<section class="sidebar">
+		<ul class="sidebar-menu" data-widget="tree">
+			<li>
+				<a href="<?php echo base_url(); ?>index.php/weekview">
+					<i class="fa fa-calendar"></i> <span>Weekly Data</span>
+				</a>
+			</li>
+			<li class="active">
+				<a href="#">
+					<i class="fa fa-bar-chart"></i> <span>Product Movement</span>
+				</a>
+			</li>
+			<li>
+				<a href="<?php echo base_url(); ?>index.php/report">
+					<i class="fa fa-file-text-o"></i> <span>Reports</span>
+				</a>
+			</li>
+			<li class="header"></li>
+			<li><a href="<?php echo base_url(); ?>index.php/product"><i class="fa fa-cubes"></i> <span>Product</span></a></li>
+			<li><a href="<?php echo base_url(); ?>index.php/uom"><i class="fa fa-sliders"></i> <span>Unit of Measurement</span></a></li>
+			<?php
+			if($_SESSION["rgc_access_level"] == 0){
+				echo '<li><a href="'.base_url().'index.php/rawmaterial"><i class="fa fa-asterisk"></i> <span>Raw Materials</span></a></li>';
+				echo '<li><a href="'.base_url().'index.php/conversion"><i class="fa fa-balance-scale"></i> <span>Conversion</span></a></li>';
+				echo '<li><a href="'.base_url().'index.php/userlist"><i class="fa fa-users"></i> <span>User List</span></a></li>';
+			}
+			?>
+			<li class="header"></li>
+			<li><a href="#" id="changepass_btn"><i class="fa fa-key"></i> <span>Change Password</span></a></li>
+		</ul>
+	</section>
+	<!-- /.sidebar -->
+</aside>
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
@@ -131,14 +120,29 @@
         $cls = "";
         if($_SESSION["rgc_access_level"] == 0){
           echo '<span class="pull-left">
-                  <div class="form-group">
-                     <select class="select2 js-states form-control" style="width: 185px" id="period_branch">
+                  <div class="form-group" id="period_branch_form">
+                     <select class="select2 js-states form-control" style="width: 185px;" id="period_branch">
                       </select>
                   </div>
                 </span>';
           $cls = " disabled";
         }
       ?>
+	  <span class="pull-left" style="margin-left: 20px;">
+		<div class="form-group">
+	    	<div class="row" id="datepicker">
+				 <input type="text" class="form-control datepicker" id="period_date" value="" placeholder="Select Date">
+			</div>
+		</div>
+	  </span>
+		<?php
+			if($_SESSION["rgc_access_level"] == 0){
+				echo '<span class="pull-right">
+					<button type="button" class="btn btn-primary disabled" id="print_pms_btn">
+					  <i class="fa fa-print"></i>&nbsp; Print</button>&nbsp; &nbsp;
+				  </span>';
+			}else{
+		?>
       <span class="pull-right">
         <button type="button" class="btn btn-info<?php echo $cls; ?>" id="new_pms_btn">
           <i class="fa fa-plus"></i>&nbsp; New Product Movement</button>
@@ -152,24 +156,24 @@
         <button type="button" class="btn btn-warning disabled" id="update_pms_btn">
           <i class="fa fa-file"></i>&nbsp; Upload</button>&nbsp; &nbsp;
       </span>
-      <span class="pull-right">
-        <button type="button" class="btn btn-primary disabled" id="print_pms_btn">
-          <i class="fa fa-print"></i>&nbsp; Print</button>&nbsp; &nbsp;
-      </span>
       <span class="btn-separator pull-right"></span>
       <span class="pull-right">
         <button type="button" class="btn btn-danger disabled" id="delete_pms_btn">
           <i class="fa fa-trash"></i>&nbsp; Delete</button>&nbsp; &nbsp;
       </span>
+		<?php
+			}
+		?>
       <div class="clearfix"></div>
       <br/>
-      <div class="row">
-        <div class="col-lg-2">
-          <ul class="list-group" id="pms_date_ul">
-          </ul>
-        </div>
 
-        <div class="col-lg-10">
+      <div class="row">
+<!--        <div class="col-lg-2">-->
+<!--          <ul class="list-group" id="pms_date_ul">-->
+<!--          </ul>-->
+<!--        </div>-->
+
+        <div class="col-lg-12">
           <div class="box">
            <div class="box-body no-padding">
               <table class="table table-hover" id="productmovementtable" style="font-size: 12px">
@@ -177,7 +181,12 @@
                   <tr>
                     <th style="width: 100px">Code</th>
                     <th style="width: 300px">Description</th>
-                    <th style="width: 140px">POS</th>
+				    <?php
+						  for($i = 1; $i<=$poscount; $i++) {
+							  echo '<th style="width: 140px">POS' . $i . '</th>';
+						  }
+				    ?>
+					<th style="width: 140px">Total Qty</th>
                     <th style="width: 140px">Beginning</th>
                     <th style="width: 140px">Delivery</th>
                     <th style="width: 140px">Transfer In</th>
@@ -225,51 +234,23 @@
                     </div>
                 </div>
 
-                <div class="row" id="row-browse_csv_file">
-                    <br />
-                    <div class="form-group">
-                        <div class="input-group">
-                            <label class="input-group-btn">
-                                <span class="btn btn-info">
-                                    Browse&hellip; <input type="file" style="display: none;" id="csvtxtbox1">
-                                </span>
-                            </label>
-                            <input type="text" id="csv_file_input" class="form-control fileinput" value="" readonly>
-                        </div>
-                    </div>
-                </div>
-
-                <?php if($poscount > 1 || $poscount == null)
-                  echo '<div class="row" id="row-browse_csv_file">
-                            <br />
-                            <div class="form-group">
-                                <div class="input-group">
-                                    <label class="input-group-btn">
-                                        <span class="btn btn-info">
-                                            Browse&hellip; <input type="file" style="display: none;" id="csvtxtbox2">
-                                        </span>
-                                    </label>
-                                    <input type="text" id="csv_file_input2" class="form-control fileinput" value="" readonly>
-                                </div>
-                            </div>
-                        </div>';
-                ?>
-
-                <?php if($poscount > 2 || $poscount == null)
-                  echo '<div class="row" id="row-browse_csv_file">
-                            <br />
-                            <div class="form-group">
-                                <div class="input-group">
-                                    <label class="input-group-btn">
-                                        <span class="btn btn-info">
-                                            Browse&hellip; <input type="file" style="display: none;" id="csvtxtbox3">
-                                        </span>
-                                    </label>
-                                    <input type="text" id="csv_file_input3" class="form-control fileinput" value="" readonly>
-                                </div>
-                            </div>
-                        </div>';
-                ?>
+				<?php
+				for($i = 1; $i<=$poscount; $i++){
+					echo '<div class="row" id="row-browse_csv_file">
+								<br />
+								<div class="form-group">
+									<div class="input-group">
+										<label class="input-group-btn">
+											<span class="btn btn-info">
+												Browse&hellip; <input type="file" style="display: none;" id="csvtxtbox'.$i.'">
+											</span>
+										</label>
+										<input type="text" id="csv_file_input'.$i.'" class="form-control fileinput pms_field" value="" readonly>
+									</div>
+								</div>
+							</div>';
+				}
+				?>
 
                 <div class="row">
                     <div id="error_cont" style='display: none;'>
@@ -308,52 +289,23 @@
         <div class="modal-body">
           <form role="form">
             <div class="box-body">
-                <div class="row" id="row-browse_csv_file">
-                    <br />
-                    <div class="form-group">
-                        <div class="input-group">
-                            <label class="input-group-btn">
-                                <span class="btn btn-info">
-                                    Browse&hellip; <input type="file" style="display: none;" id="updatecsvtxtbox1">
-                                </span>
-                            </label>
-                            <input type="text" id="update_csv_file_input" class="form-control fileinput" value="" readonly>
-                        </div>
-                    </div>
-                </div>
-
-               <?php if($poscount > 1 || $poscount == null)
-                  echo '<div class="row" id="row-browse_csv_file">
-                            <br />
-                            <div class="form-group">
-                                <div class="input-group">
-                                    <label class="input-group-btn">
-                                        <span class="btn btn-info">
-                                            Browse&hellip; <input type="file" style="display: none;" id="updatecsvtxtbox2">
-                                        </span>
-                                    </label>
-                                    <input type="text" id="update_csv_file_input2" class="form-control fileinput" value="" readonly>
-                                </div>
-                            </div>
-                        </div>';
+               <?php
+			   		for($i = 1; $i<=$poscount; $i++){
+						echo '<div class="row" id="row-browse_csv_file">
+								<br />
+								<div class="form-group">
+									<div class="input-group">
+										<label class="input-group-btn">
+											<span class="btn btn-info">
+												Browse&hellip; <input type="file" style="display: none;" id="updatecsvtxtbox'.$i.'">
+											</span>
+										</label>
+										<input type="text" id="update_csv_file_input'.$i.'" class="form-control fileinput pms_field" value="" readonly>
+									</div>
+								</div>
+							</div>';
+					}
                 ?>
-
-                <?php if($poscount > 2 || $poscount == null)
-                  echo '<div class="row" id="row-browse_csv_file">
-                            <br />
-                            <div class="form-group">
-                                <div class="input-group">
-                                    <label class="input-group-btn">
-                                        <span class="btn btn-info">
-                                            Browse&hellip; <input type="file" style="display: none;" id="updatecsvtxtbox3">
-                                        </span>
-                                    </label>
-                                    <input type="text" id="update_csv_file_input3" class="form-control fileinput" value="" readonly>
-                                </div>
-                            </div>
-                        </div>';
-                ?>
-
                 <div class="row">
                     <div id="error_cont" style='display: none;'>
                     </div>
@@ -524,6 +476,8 @@
   $.widget.bridge('uibutton', $.ui.button);
   var baseurl = '<?php echo base_url(); ?>'+'index.php';
   var access_level = '<?php echo $_SESSION["rgc_access_level"]; ?>';
+
+  var pos_count = '<?php echo $poscount; ?>';
 </script>
 <!-- Bootstrap 3.3.7 -->
 <script src="<?php echo base_url(); ?>assets/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>

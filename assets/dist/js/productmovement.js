@@ -63,161 +63,182 @@ $(document).ready(function(){
     var updatecsvfiles = [];
 
     $("button#clear_pms_field").on("click", function(){
-        $("input#pms_date").val("");
-        $("input#csv_file_input").val("");
-        $("input#csv_file_input2").val("");
-        $("input#csv_file_input3").val("");
-        $("input#update_csv_file_input").val("");
-        $("input#update_csv_file_input2").val("");
-        $("input#update_csv_file_input3").val("");
-
+        $("input.pms_field").val("");
         csvfiles = [];
         updatecsvfiles = [];
     });
 
     /* load period when selecting branch for administrator */
-    $('.select2#period_branch').on('select2:select', function(e){
-        $("button#new_pms_btn").removeClass("disabled");
+    // $('.select2#period_branch').on('select2:select', function(e){
+    //     $("button#new_pms_btn").removeClass("disabled");
+	//
+    //     var data = e.params.data;
+    //     var d = {"branch_id": data["id"]};
+    //     /* LOAD PERIOD DATA */
+    //     $.ajax({
+    //         url: baseurl + "/productmovement/getperiod",
+    //         data: d,
+    //         type: 'POST',
+    //         success: function (data){
+    //             var data = JSON.parse(data);
+    //             var li = "";
+    //             $.each(data, function(ind, row){
+    //                 var status = "";
+    //                 if(row["status"] == 1){
+    //                     status = " complete_pms";
+    //                 }
+    //                 li += "<li class='list-group-item"+status+"' id='pmsli_"+row["id"]+"'>"+row["date"]+"</li>";
+    //             });
+    //             $("table#productmovementtable tbody").html('<tr id="row1"><td colspan="7" align="center"><font style="color: #ff3300"><b>No data to display.</b></font></td></tr>');
+    //             if(data.length > 0){
+    //                 $("ul#pms_date_ul").html(li);
+    //             }else{
+    //                 $("ul#pms_date_ul").html("<li class='list-group-item activeli'><b>No records found.</b></li>");
+    //             }
+    //         }
+    //     });
+    //     /* LOAD PERIOD DATA */
+    // });
+    // /* end */
+    // if(access_level == 1){
+    //     /* LOAD PERIOD DATA */
+    //     $.ajax({
+    //         url: baseurl + "/productmovement/getperiod",
+    //         type: 'POST',
+    //         success: function (data){
+    //             var data = JSON.parse(data);
+    //             var li = "";
+    //             $.each(data, function(ind, row){
+    //                 var status = "";
+    //                 if(row["status"] == 1){
+    //                     status = " complete_pms";
+    //                 }
+    //                 li += "<li class='list-group-item"+status+"' id='pmsli_"+row["id"]+"'>"+row["date"]+"</li>";
+    //             });
+    //             if(data.length > 0){
+    //                 $("ul#pms_date_ul").html(li);
+    //             }else{
+    //                 $("ul#pms_date_ul").html("<li class='list-group-item activeli'><b>No records found.</b></li>");
+    //             }
+    //         }
+    //     });
+    //     /* LOAD PERIOD DATA */
+    // }else{
+    //     $.ajax({
+    //         method: "POST",
+    //         url: baseurl+"/branch/getAll",
+    //         success: function(res){
+    //             var res = JSON.parse(res);
+    //             var data = [{"id":"","text":""}];
+    //             $.each(res, function(i, r){
+    //                 data.push({"id":r["id"],"text":r["branch_name"]});
+    //             });
+	//
+	//
+    //              $('.select2#period_branch').select2({
+    //                 placeholder: "Select a branch",
+    //                 data: data
+    //              });
+    //         }
+    //     });
+    //     $("ul#pms_date_ul").html("<li class='list-group-item activeli'><b>No records found.</b></li>");
+    // }
 
-        var data = e.params.data;
-        var d = {"branch_id": data["id"]};
-        /* LOAD PERIOD DATA */
-        $.ajax({
-            url: baseurl + "/productmovement/getperiod",
-            data: d,
-            type: 'POST',
-            success: function (data){
-                var data = JSON.parse(data);
-                var li = "";
-                $.each(data, function(ind, row){
-                    var status = "";
-                    if(row["status"] == 1){
-                        status = " complete_pms";
-                    }
-                    li += "<li class='list-group-item"+status+"' id='pmsli_"+row["id"]+"'>"+row["date"]+"</li>";
-                });
-                $("table#productmovementtable tbody").html('<tr id="row1"><td colspan="7" align="center"><font style="color: #f30"><b>No data to display.</b></font></td></tr>');
-                if(data.length > 0){
-                    $("ul#pms_date_ul").html(li);
-                }else{
-                    $("ul#pms_date_ul").html("<li class='list-group-item activeli'><b>No records found.</b></li>");
-                }
-            }
-        });
-        /* LOAD PERIOD DATA */
-    });
-    /* end */
-    if(access_level == 1){
-        /* LOAD PERIOD DATA */
-        $.ajax({
-            url: baseurl + "/productmovement/getperiod",
-            type: 'POST',
-            success: function (data){
-                var data = JSON.parse(data);
-                var li = "";
-                $.each(data, function(ind, row){
-                    var status = "";
-                    if(row["status"] == 1){
-                        status = " complete_pms";
-                    }
-                    li += "<li class='list-group-item"+status+"' id='pmsli_"+row["id"]+"'>"+row["date"]+"</li>";
-                });
-                if(data.length > 0){
-                    $("ul#pms_date_ul").html(li);
-                }else{
-                    $("ul#pms_date_ul").html("<li class='list-group-item activeli'><b>No records found.</b></li>");
-                }
-            }
-        });
-        /* LOAD PERIOD DATA */
-    }else{
-        $.ajax({
-            method: "POST",
-            url: baseurl+"/branch/getAll",
-            success: function(res){
-                var res = JSON.parse(res);
-                var data = [{"id":"","text":""}];
-                $.each(res, function(i, r){
-                    data.push({"id":r["id"],"text":r["branch_name"]});
-                });
+    // $("ul#pms_date_ul").on("click", "li", function(){
+    //     var id = $(this).attr("id");
+    //     $("ul#pms_date_ul li").removeClass("activeli");
+    //     $(this).addClass("activeli");
+	//
+    //     if(!$(this).hasClass("complete_pms"))
+    //         $("#complete_pms_btn, #update_pms_btn, #delete_pms_btn").removeClass("disabled");
+    //     else
+    //         $("#complete_pms_btn, #update_pms_btn, #delete_pms_btn").addClass("disabled");
+	//
+    //     $("#print_pms_btn").removeClass("disabled");
+	//
+    //     var d = {"period_id": id.split("_")[1]};
+    //
+    // });
 
+	$.ajax({
+		method: "POST",
+		url: baseurl+"/branch/getAll",
+		success: function(res){
+			var res = JSON.parse(res);
+			var data = [{"id":"","text":""}];
+			$.each(res, function(i, r){
+				data.push({"id":r["id"],"text":r["branch_name"]});
+			});
 
-                 $('.select2#period_branch').select2({
-                    placeholder: "Select a branch",
-                    data: data
-                 });
-            }
-        });
-        $("ul#pms_date_ul").html("<li class='list-group-item activeli'><b>No records found.</b></li>");
-    }
+			 $('.select2#period_branch').select2({
+				placeholder: "Select a branch",
+				data: data
+			 });
+		}
+	});
 
+    function parseTable(data){
+		var li = "";
+		$.each(data, function(ind, row){
+			row["beginning"] = row["beginning"] == null ? 0 : row["beginning"];
+			row["ending"] = row["ending"] == null ? 0 : row["ending"];
+			row["actual"] = row["actual"] == null ? 0 : row["actual"];
 
-    $("ul#pms_date_ul").on("click", "li", function(){
-        var id = $(this).attr("id");
-        $("ul#pms_date_ul li").removeClass("activeli");
-        $(this).addClass("activeli");
+			var label_cls = row["discrepancy"] < 0 ? "label-danger" : "label-primary";
 
-        if(!$(this).hasClass("complete_pms"))
-            $("#complete_pms_btn, #update_pms_btn, #delete_pms_btn").removeClass("disabled");
-        else
-            $("#complete_pms_btn, #update_pms_btn, #delete_pms_btn").addClass("disabled");
+			li += '<tr id="'+row["product_id"]+'" data-period="'+row["id"]+'">'
+				+ '<td class="clickable js-pmsinfo-toggle" data-toggle="collapse" id="'+row["product_id"]+'" data-target="child'+row["product_id"]+'">'+row["product_id"]+'</td>'
+				+ '<td class="clickable js-pmsinfo-toggle" data-toggle="collapse" id="'+row["product_id"]+'" data-target="child'+row["product_id"]+'">'+row["description"]+'</td>';
 
-        $("#print_pms_btn").removeClass("disabled");
+				for(var i=1;i<=pos_count;i++){
+					li += '<td>'+row["pos"+i]+'</td>';
+				}
 
-        var d = {"period_id": id.split("_")[1]};
-        $.ajax({
-            url: baseurl + "/productmovement/getproductmovement",
-            data: d,
-            type: 'POST',
-            success: function (data){
-                var data = JSON.parse(data);
-                var li = "";
-                $.each(data, function(ind, row){
-                    row["beginning"] = row["beginning"] == null ? 0 : row["beginning"];
-                    row["ending"] = row["ending"] == null ? 0 : row["ending"];
-                    row["actual"] = row["actual"] == null ? 0 : row["actual"];
+				li += '<td>'+row["pos_total"]+'</td>'
+				+ '<td class="td_beg_data">'+row["beginning"]+'</td>'
+				+ '<td class="td_del_data">'+row["delivery"]+'</td>'
+				+ '<td class="td_transin_data">'+row["trans_in"]+'</td>'
+				+ '<td class="td_end_data">'+row["ending"]+'</td>'
+				+ '<td class="td_ret_data">'+row["return_stock"]+'</td>'
+				+ '<td class="td_transout_data">'+row["trans_out"]+'</td>'
+				+ '<td class="td_actual_data">'+row["actual"]+'</td>'
+				+ '<td class="td_discrepancy_data"><span class="label '+label_cls+'">'+row["discrepancy"]+'</span></td>'
+				+ '</tr>';
 
-                    var label_cls = row["discrepancy"] < 0 ? "label-danger" : "label-primary";
+			if(row["child"].length > 0){
+				li += '<tr class="collapse child'+row["product_id"]+'">'
+					+ '<td colspan="11">'
+					+ '<table class="pmsinfo pmsinfo--child" data-detail-view="">'
+					+ '<thead>'
+					+ '<th style="width: 100px"></th>'
+					+ '<th style="width: 140px"></th>';
 
-                    li += '<tr id="'+row["product_id"]+'" data-period="'+row["id"]+'">'
-                        + '<td class="clickable js-pmsinfo-toggle" data-toggle="collapse" id="'+row["product_id"]+'" data-target="child'+row["product_id"]+'">'+row["product_id"]+'</td>'
-                        + '<td class="clickable js-pmsinfo-toggle" data-toggle="collapse" id="'+row["product_id"]+'" data-target="child'+row["product_id"]+'">'+row["description"]+'</td>'
-                        + '<td class="clickable js-pmsinfo-toggle" data-toggle="collapse" id="'+row["product_id"]+'" data-target="child'+row["product_id"]+'">'+row["pos_sold"]+'</td>'
-                        + '<td class="td_beg_data">'+row["beginning"]+'</td>'
-                        + '<td class="td_del_data">'+row["delivery"]+'</td>'
-                        + '<td class="td_transin_data">'+row["trans_in"]+'</td>'
-                        + '<td class="td_end_data">'+row["ending"]+'</td>'
-                        + '<td class="td_ret_data">'+row["return_stock"]+'</td>'
-                        + '<td class="td_transout_data">'+row["trans_out"]+'</td>'
-                        + '<td class="td_actual_data">'+row["actual"]+'</td>'
-                        + '<td class="td_discrepancy_data"><span class="label '+label_cls+'">'+row["discrepancy"]+'</span></td>'
-                        + '</tr>';
+					for(var i=1;i<=pos_count;i++){
+						li += '<th style="width: 90px"></th>';
+					}
 
-                    if(row["child"].length > 0){
-                        li += '<tr class="collapse child'+row["product_id"]+'">'
-                                  + '<td colspan="11">'
-                                  + '<table class="pmsinfo pmsinfo--child" data-detail-view="">'
-                                  + '<thead>'
-                                  + '<th style="width: 100px"></th>'
-                                  + '<th style="width: 266px"></th>'
-                                  + '<th style="width: 140px"></th>'
-                                  + '</thead>'
-                                  + '<tbody>';
-                        $.each(row["child"], function(cind, crow){
-                            li += '<tr class="subrow'+cind+'" data-href="#">'
-                                      + '<td style="padding-left: 15px;">'+crow["product_id"]+'</td>'
-                                      + '<td style="padding-left: 15px;">'+crow["description"]+'</td>'
-                                      + '<td style="padding-left: 15px;">'+crow["pos_sold"]+'</td>'
-                                      + '</tr>';
-                        });
-                        li += "</tbody></table></td></tr>"
-                    }//if child exist
-                });//for each product
+					li += '<th style="width: 100px"></th>'
+					+ '</thead>'
+					+ '<tbody>';
+				$.each(row["child"], function(cind, crow){
 
-                $("table#productmovementtable tbody").html(li);
-            }
-        });
-    });
+					li += '<tr class="subrow'+cind+'" data-href="#">'
+						+ '<td style="padding-left: 15px;">'+crow["product_id"]+'</td>'
+						+ '<td style="padding-left: 15px;">'+crow["description"]+'</td>';
+
+						for(var i=1;i<=pos_count;i++){
+							li += '<td style="padding-left: 15px;">'+crow["pos"+1]+'</td>';
+						}
+
+					li += '<td style="padding-left: 15px;">'+crow["pos_total"]+'</td>'
+						+ '</tr>';
+				});
+				li += "</tbody></table></td></tr>"
+			}//if child exist
+		});//for each product
+
+		$("table#productmovementtable tbody").html(li);
+	}
 
     $("table#productmovementtable").on("click", "td.js-pmsinfo-toggle", function(){
         var tgt = $(this).attr("data-target");
@@ -299,7 +320,42 @@ $(document).ready(function(){
 		$("div#new_pms_modal").modal("show");
 	});
 
-	$("input#pms_date").datepicker();
+	$("input#pms_date").datepicker({
+		autoclose: true,
+		todayHighlight : true,
+		format: 'mm/dd/yyyy'
+	});
+
+	$("input#period_date").datepicker({
+		autoclose: true,
+		todayHighlight : true,
+		format: 'mm/dd/yyyy'
+	}).on('changeDate', function(){
+		var pdate = $(this).val();
+		var d = {"periodate": pdate};
+
+		if(access_level == 0){
+			var branch_id = $("select#period_branch").select2('val');
+			d["branch_id"] = branch_id;
+		}
+
+		$.ajax({
+			url: baseurl + "/productmovement/getproductmovement",
+			data: d,
+			type: 'POST',
+			success: function (data) {
+				if(data == "nodata"){
+					var tbodytr = '<tr id="row1">'
+						+'<td colspan="7" align="center"><span style="color: #f30"><b>No data to display.</b></span></td>'
+					+'</tr>'
+					$("table#productmovementtable tbody").html(tbodytr);
+				}else{
+					var data = JSON.parse(data);
+					parseTable(data);
+				}
+			}
+		});
+	});
 
 	/* import data */
 	$(document).on('change', ':file', function () {
@@ -321,14 +377,10 @@ $(document).ready(function(){
         }
     });
 
-	$('input#csvtxtbox1').on('change', prepareUpload);
-	$('input#csvtxtbox2').on('change', prepareUpload);
-    $('input#csvtxtbox3').on('change', prepareUpload);
-
-
-    $('input#updatecsvtxtbox1').on('change', prepareUploadUpdate);
-    $('input#updatecsvtxtbox2').on('change', prepareUploadUpdate);
-    $('input#updatecsvtxtbox3').on('change', prepareUploadUpdate);
+	for(var i=1;i<=pos_count;i++){
+		$('input#csvtxtbox'+i).on('change', prepareUpload);
+		$('input#updatecsvtxtbox'+i).on('change', prepareUploadUpdate);
+	}
 
 	function prepareUpload(event) {
         csvfiles.push(event.target.files);
@@ -493,21 +545,35 @@ $(document).ready(function(){
 
             return;
         }
-        // Create a formdata object and add the files
-        var data = new FormData();
-        data.append("pms_date", pms_date);
-        data.append("branch_id", branch_id);
-        if (typeof files !== 'undefined')
-            $.each(files, function (key, value)
-            {
-                $.each(value, function (k, v)
-                {
-                    data.append("csvfile" + key, v);
-                });
-            });
 
+        //check if period exist
+		var datedata = {'date': pms_date};
+		$.ajax({
+			url: baseurl + "/productmovement/checkperiod",
+			type: 'POST',
+			data: datedata,
+			cache: false,
+			success: function (res){
+				if(res > 0){
+					alert("Period date already exist.");
+					return;
+				}
+				// Create a formdata object and add the files
+				var data = new FormData();
+				data.append("pms_date", pms_date);
+				data.append("branch_id", branch_id);
+				if (typeof files !== 'undefined')
+					$.each(files, function (key, value)
+					{
+						$.each(value, function (k, v)
+						{
+							data.append("csvfile" + key, v);
+						});
+					});
 
-        doUpload(data);
+				doUpload(data);
+			}
+		});
     }
 
     function doUpload(data) {

@@ -3,11 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>AdminLTE 2 | Dashboard</title>
+  <title>AdminLTE 2 | Weekly Data</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
   <link rel="stylesheet" href="<?php echo base_url(); ?>assets/bower_components/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="<?php echo base_url(); ?>assets/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="<?php echo base_url(); ?>assets/bower_components/font-awesome/css/font-awesome.min.css">
   <!-- Ionicons -->
@@ -29,6 +30,8 @@
   <link rel="stylesheet" href="<?php echo base_url(); ?>assets/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
 
   <link rel="stylesheet" href="<?php echo base_url(); ?>assets/dist/css/fonts.css">
+  <link rel="stylesheet" href="<?php echo base_url(); ?>assets/dist/css/style.css">
+  <link rel="stylesheet" href="<?php echo base_url(); ?>assets/dist/css/select.min.css">
 </head>
 <body class="hold-transition skin-red sidebar-mini">
 <div class="wrapper">
@@ -53,8 +56,7 @@
           <!-- User Account: style can be found in dropdown.less -->
           <li class="dropdown user user-menu">
             <a href="<?php echo base_url(); ?>assets/#" class="dropdown-toggle" data-toggle="dropdown">
-              <img src="<?php echo base_url(); ?>assets/dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
-              <span class="hidden-xs">Alexander Pierce</span>
+              <span class="hidden-xs">USER</span>
             </a>
             <ul class="dropdown-menu">
               <!-- Menu Footer-->
@@ -76,45 +78,35 @@
   <aside class="main-sidebar">
     <!-- sidebar: style can be found in sidebar.less -->
     <section class="sidebar">
-      <!-- Sidebar user panel -->
-      <div class="user-panel">
-        <div class="pull-left image">
-          <img src="<?php echo base_url(); ?>assets/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
-        </div>
-        <div class="pull-left info">
-          <p>Justine Frange</p>
-        </div>
-      </div>
-      <!-- /.search form -->
-      <!-- sidebar menu: : style can be found in sidebar.less -->
-      <ul class="sidebar-menu" data-widget="tree">
-        <li class="header">MAIN NAVIGATION</li>
-        <li class='active'>
-          <a href="#">
-            <i class="fa fa-dashboard"></i> <span>Dashboard</span>
-          </a>
-        </li>
-        <li>
-          <a href="<?php echo base_url(); ?>index.php/productmovement">
-            <i class="fa fa-bar-chart"></i> <span>Product Movement</span>
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <i class="fa fa-file-text-o"></i> <span>Reports</span>
-          </a>
-        </li>
-        <li class="header"></li>
-        <li><a href="<?php echo base_url(); ?>index.php/product"><i class="fa fa-cubes"></i> <span>Product</span></a></li>
-        <li><a href="#"><i class="fa fa-sliders"></i> <span>Unit of Measurement</span></a></li>
-        <?php
-          if($_SESSION["rgc_access_level"] == 0){
-              echo '<li><a href="#"><i class="fa fa-users"></i> <span>User List</span></a></li>';
-          }
-        ?>
-        <li class="header"></li>
-        <li><a href="#"><i class="fa fa-key"></i> <span>Change Password</span></a></li>
-      </ul>
+		<ul class="sidebar-menu" data-widget="tree">
+			<li class="active">
+				<a href="#">
+					<i class="fa fa-calendar"></i> <span>Weekly Data</span>
+				</a>
+			</li>
+			<li>
+				<a href="<?php echo base_url(); ?>index.php/productmovement">
+					<i class="fa fa-bar-chart"></i> <span>Product Movement</span>
+				</a>
+			</li>
+			<li>
+				<a href="<?php echo base_url(); ?>index.php/report">
+					<i class="fa fa-file-text-o"></i> <span>Reports</span>
+				</a>
+			</li>
+			<li class="header"></li>
+			<li><a href="<?php echo base_url(); ?>index.php/product"><i class="fa fa-cubes"></i> <span>Product</span></a></li>
+			<li><a href="<?php echo base_url(); ?>index.php/uom"><i class="fa fa-sliders"></i> <span>Unit of Measurement</span></a></li>
+			<?php
+			if($_SESSION["rgc_access_level"] == 0){
+				echo '<li><a href="'.base_url().'index.php/rawmaterial"><i class="fa fa-asterisk"></i> <span>Raw Materials</span></a></li>';
+				echo '<li><a href="'.base_url().'index.php/conversion"><i class="fa fa-balance-scale"></i> <span>Conversion</span></a></li>';
+				echo '<li><a href="'.base_url().'index.php/userlist"><i class="fa fa-users"></i> <span>User List</span></a></li>';
+			}
+			?>
+			<li class="header"></li>
+			<li><a href="#" id="changepass_btn"><i class="fa fa-key"></i> <span>Change Password</span></a></li>
+		</ul>
     </section>
     <!-- /.sidebar -->
   </aside>
@@ -123,83 +115,147 @@
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
-      <h1>
-        Dashboard
-        <small>Control panel</small>
-      </h1>
-      <ol class="breadcrumb">
-        <li><a href="<?php echo base_url(); ?>assets/#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active">Dashboard</li>
-      </ol>
+		<div class="row">
+			<div class="col-md-6">
+				<?php
+					$cls = "";
+					$style = "";
+					if($_SESSION["rgc_access_level"] == 0){
+						echo '<span class="pull-left">
+								  <div class="form-group" id="period_branch_form">
+									 <select class="select2 js-states form-control" style="width: 185px;" id="period_branch">
+									  </select>
+								  </div>
+								</span>';
+						$cls = " disabled";
+						$style = "margin-left: 16px;";
+					}
+				?>
+				<span class="pull-left" style="<?php echo $style; ?>">
+					<div class="row" id="week_data_datepicker">
+						<input type="text" class="form-control datepicker" id="week_data_date" value="" placeholder="Filter Date">
+					</div>
+				</span>
+			</div>
+		</div>
     </section>
 
     <!-- Main content -->
     <section class="content">
-      <!-- Small boxes (Stat box) -->
-      <div class="row">
-        <div class="col-lg-3 col-xs-6">
-          <!-- small box -->
-          <div class="small-box bg-aqua">
-            <div class="inner">
-              <h3>150</h3>
+		<div class="row">
+			<div class="col-md-4">
+				<div class="box box-danger">
+					<div class="box-header with-border">
+						<h3 class="box-title">Raw Materials</h3>
+					</div>
+					<!-- /.box-header -->
+					<div class="box-body">
+						<table class="table table-hover" id="raw_material_tbl">
+							<thead>
+								<th>Description</th>
+								<th>UoM</th>
+								<th>Week Total</th>
+								<th>Week Avg</th>
+							</thead>
+							<tbody>
+								<!-- raw materials data -->
+							</tbody>
+						</table>
+					</div>
+					<!-- /.box-body -->
+				</div>
+				<!-- /.box -->
+			</div>
+			<!-- /.col -->
 
-              <p>New Orders</p>
-            </div>
-            <div class="icon">
-              <i class="ion ion-bag"></i>
-            </div>
-            <a href="<?php echo base_url(); ?>assets/#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-        <!-- ./col -->
-        <div class="col-lg-3 col-xs-6">
-          <!-- small box -->
-          <div class="small-box bg-green">
-            <div class="inner">
-              <h3>53<sup style="font-size: 20px">%</sup></h3>
+			<div class="col-md-4">
+				<div class="box box-success">
+					<div class="box-header with-border">
+						<h3 class="box-title">Premix & Sauce</h3>
+					</div>
+					<!-- /.box-header -->
+					<div class="box-body">
+						<table class="table table-hover" id="premix_sauce_tbl">
+							<thead>
+								<th>Description</th>
+								<th>UoM</th>
+								<th>Week Total</th>
+								<th>Week Avg</th>
+							</thead>
+							<tbody>
+							<!-- raw materials data -->
+							</tbody>
+						</table>
+					</div>
+					<!-- /.box-body -->
+				</div>
+				<!-- /.box -->
+			</div>
+			<!-- /.col -->
 
-              <p>Bounce Rate</p>
-            </div>
-            <div class="icon">
-              <i class="ion ion-stats-bars"></i>
-            </div>
-            <a href="<?php echo base_url(); ?>assets/#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-        <!-- ./col -->
-        <div class="col-lg-3 col-xs-6">
-          <!-- small box -->
-          <div class="small-box bg-yellow">
-            <div class="inner">
-              <h3>44</h3>
+			<div class="col-md-4">
+				<div class="box box-primary">
+					<div class="box-header with-border">
+						<h3 class="box-title">Drinks</h3>
+					</div>
+					<!-- /.box-header -->
+					<div class="box-body">
+						<table class="table table-hover" id="drinks_tbl">
+							<thead>
+								<th>Description</th>
+								<th>UoM</th>
+								<th>Week Total</th>
+								<th>Week Avg</th>
+							</thead>
+							<tbody>
+							<!-- raw materials data -->
+							</tbody>
+						</table>
+					</div>
+					<!-- /.box-body -->
+				</div>
+				<!-- /.box -->
+			</div>
+			<!-- /.col -->
 
-              <p>User Registrations</p>
-            </div>
-            <div class="icon">
-              <i class="ion ion-person-add"></i>
-            </div>
-            <a href="<?php echo base_url(); ?>assets/#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-        <!-- ./col -->
-        <div class="col-lg-3 col-xs-6">
-          <!-- small box -->
-          <div class="small-box bg-red">
-            <div class="inner">
-              <h3>65</h3>
+		</div>
 
-              <p>Unique Visitors</p>
-            </div>
-            <div class="icon">
-              <i class="ion ion-pie-graph"></i>
-            </div>
-            <a href="<?php echo base_url(); ?>assets/#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-        <!-- ./col -->
-      </div>
-      <!-- /.row -->
+		<div class="row">
 
+			<div class="col-md-12">
+				<div class="box box-warning">
+					<div class="box-header with-border">
+						<h3 class="box-title">Weekly Data</h3>
+
+
+						<div class="pull-right">
+							<div class="form-group">
+								<input type="text" class="form-control" placeholder="Search...">
+							</div>
+						</div>
+					</div>
+					<!-- /.box-header -->
+					<div class="box-body">
+						<table class="table table-hover" id="weekly_pms_tbl">
+							<thead>
+								<tr>
+<!--									<th>First name</th>-->
+<!--									<th>Last name</th>-->
+<!--									<th>Position</th>-->
+<!--									<th>Office</th>-->
+								</tr>
+							</thead>
+							<tbody>
+							</tbody>
+						</table>
+					</div>
+					<!-- /.box-body -->
+				</div>
+				<!-- /.box -->
+			</div>
+			<!-- /.col -->
+
+		</div>
     </section>
     <!-- /.content -->
   </div>
@@ -219,21 +275,15 @@
 <!-- jQuery UI 1.11.4 -->
 <script src="<?php echo base_url(); ?>assets/bower_components/jquery-ui/jquery-ui.min.js"></script>
 <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+<script src="<?php echo base_url(); ?>assets/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="<?php echo base_url(); ?>assets/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
 <script>
   $.widget.bridge('uibutton', $.ui.button);
+  var baseurl = '<?php echo base_url(); ?>'+'index.php';
+  var access_level = '<?php echo $_SESSION["rgc_access_level"]; ?>';
 </script>
 <!-- Bootstrap 3.3.7 -->
 <script src="<?php echo base_url(); ?>assets/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-<!-- Morris.js charts -->
-<script src="<?php echo base_url(); ?>assets/bower_components/raphael/raphael.min.js"></script>
-<script src="<?php echo base_url(); ?>assets/bower_components/morris.js/morris.min.js"></script>
-<!-- Sparkline -->
-<script src="<?php echo base_url(); ?>assets/bower_components/jquery-sparkline/dist/jquery.sparkline.min.js"></script>
-<!-- jvectormap -->
-<script src="<?php echo base_url(); ?>assets/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
-<script src="<?php echo base_url(); ?>assets/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
-<!-- jQuery Knob Chart -->
-<script src="<?php echo base_url(); ?>assets/bower_components/jquery-knob/dist/jquery.knob.min.js"></script>
 <!-- daterangepicker -->
 <script src="<?php echo base_url(); ?>assets/bower_components/moment/min/moment.min.js"></script>
 <script src="<?php echo base_url(); ?>assets/bower_components/bootstrap-daterangepicker/daterangepicker.js"></script>
@@ -247,9 +297,10 @@
 <script src="<?php echo base_url(); ?>assets/bower_components/fastclick/lib/fastclick.js"></script>
 <!-- AdminLTE App -->
 <script src="<?php echo base_url(); ?>assets/dist/js/adminlte.min.js"></script>
-<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-<script src="<?php echo base_url(); ?>assets/dist/js/pages/dashboard.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="<?php echo base_url(); ?>assets/dist/js/demo.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="<?php echo base_url(); ?>assets/dist/js/select.min.js"></script>
+<script src="<?php echo base_url(); ?>assets/dist/js/weeklyview.js"></script>
 </body>
 </html>
