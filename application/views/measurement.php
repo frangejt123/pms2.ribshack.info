@@ -96,6 +96,7 @@
 				<li class="header"></li>
 				<li><a href="<?php echo base_url(); ?>index.php/product"><i class="fa fa-cubes"></i> <span>Product</span></a></li>
 				<li class="active"><a href="#"><i class="fa fa-sliders"></i> <span>Unit of Measurement</span></a></li>
+				<li><a href="<?php echo base_url(); ?>index.php/branch"><i class="fa fa-home"></i> <span>Branch</span></a></li>
 				<?php
 				if($_SESSION["rgc_access_level"] == 0){
 					echo '<li><a href="'.base_url().'index.php/rawmaterial"><i class="fa fa-asterisk"></i> <span>Raw Materials</span></a></li>';
@@ -149,9 +150,9 @@
         <div class="modal-header">
            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">×</span></button>
-          <h4 class="modal-title"><span 
+          <h4 class="modal-title"><span
             style="border-radius: 2px; padding: 6px;
-            border: 1px solid #008d4c; background-color: #00a65a; color: #FFF"; 
+            border: 1px solid #008d4c; background-color: #00a65a; color: #FFF";
             class="fa fa-sliders"></span> &nbsp; <b>New Measurement</b></h4>
         </div>
         <div class="modal-body">
@@ -193,9 +194,9 @@
         <div class="modal-header">
            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">×</span></button>
-          <h4 class="modal-title"><span 
+          <h4 class="modal-title"><span
             style="border-radius: 2px; padding: 6px;
-            border: 1px solid #008d4c; background-color: #00a65a; color: #FFF"; 
+            border: 1px solid #008d4c; background-color: #00a65a; color: #FFF";
             class="fa fa-sliders"></span> &nbsp; <b>Measurement Detail</b></h4>
         </div>
         <div class="modal-body">
@@ -241,7 +242,7 @@
           </h5>
         </div>
         <div class="modal-body">
-          <p>Are you sure you want to delete this record? 
+          <p>Are you sure you want to delete this record?
           This action cannot be undone and you will be unable to recover any data.</p>
         </div>
         <div class="modal-footer">
@@ -256,7 +257,7 @@
         </div>
       </div>
     </div>
-  </div>     
+  </div>
   <!-- confirm modal -->
 
   <footer class="main-footer">

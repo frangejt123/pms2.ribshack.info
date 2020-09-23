@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Ribshack | Raw Material</title>
+	<title>Ribshack | Branch</title>
 	<!-- Tell the browser to be responsive to screen width -->
 	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 	<!-- Bootstrap 3.3.7 -->
@@ -37,7 +37,7 @@
 
 	<header class="main-header">
 		<!-- Logo -->
-		<a href="<?php echo base_url(); ?>assets/index2.html" class="logo">
+		<a href="#" class="logo">
 			<!-- mini logo for sidebar mini 50x50 pixels -->
 			<span class="logo-mini"><b>RGC</b></span>
 			<!-- logo for regular state and mobile devices -->
@@ -95,11 +95,11 @@
 				</li>
 				<li class="header"></li>
 				<li><a href="<?php echo base_url(); ?>index.php/product"><i class="fa fa-cubes"></i> <span>Product</span></a></li>
-				<li><a href="<?php echo base_url(); ?>index.php/uom"><i class="fa fa-sliders"></i> <span>Unit of Measurement</span></a></li>
-				<li><a href="<?php echo base_url(); ?>index.php/branch"><i class="fa fa-home"></i> <span>Branch</span></a></li>
+				<li><a href="<?php echo base_url(); ?>index.php/branch"><i class="fa fa-sliders"></i> <span>Unit of branch</span></a></li>
+				<li class="active"><a href="#"><i class="fa fa-home"></i> <span>Branch</span></a></li>
 				<?php
 				if($_SESSION["rgc_access_level"] == 0){
-					echo '<li class="active"><a href="#"><i class="fa fa-asterisk"></i> <span>Raw Materials</span></a></li>';
+					echo '<li><a href="'.base_url().'index.php/rawmaterial"><i class="fa fa-asterisk"></i> <span>Raw Materials</span></a></li>';
 					echo '<li><a href="'.base_url().'index.php/conversion"><i class="fa fa-balance-scale"></i> <span>Conversion</span></a></li>';
 					echo '<li><a href="'.base_url().'index.php/userlist"><i class="fa fa-users"></i> <span>User List</span></a></li>';
 				}
@@ -116,7 +116,7 @@
 		<!-- Main content -->
 		<section class="content">
       <span class="pull-right">
-        <button type="button" class="btn btn-info" id="new_rm_btn"><i class="fa fa-plus"></i>&nbsp; Add Raw Material</button>
+        <button type="button" class="btn btn-info" id="new_branch_btn"><i class="fa fa-plus"></i>&nbsp; Add Branch</button>
       </span>
 			<div class="clearfix"></div>
 			<br/>
@@ -124,12 +124,14 @@
 				<div class="col-lg-12">
 					<div class="box">
 						<div class="box-body no-padding">
-							<table class="table table-hover" id="rawmaterialtable">
+							<table class="table table-hover" id="branchtable">
 								<thead>
 								<tr>
-									<th>Description</th>
-									<th>Type</th>
-									<th>Uom</th>
+									<th>Branch Name</th>
+									<th>Address</th>
+									<th>TIN #</th>
+									<th>Operated By</th>
+									<th>Pos Count</th>
 								</tr>
 								</thead>
 								<tbody>
@@ -145,7 +147,7 @@
 	<!-- /.content-wrapper -->
 
 	<!-- modal [new product] -->
-	<div class="modal fade" id="new_rm_modal" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+	<div class="modal fade" id="new_branch_modal" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -154,26 +156,34 @@
 					<h4 class="modal-title"><span
 							style="border-radius: 2px; padding: 6px;
             border: 1px solid #008d4c; background-color: #00a65a; color: #FFF";
-							class="fa fa-sliders"></span> &nbsp; <b>New Raw Material</b></h4>
+							class="fa fa-sliders"></span> &nbsp; <b>New Branch</b></h4>
 				</div>
 				<div class="modal-body">
-					<form role="form" id="newRMForm">
+					<form role="form" id="newbranchForm">
 						<div class="box-body">
 							<div class="form-group">
-								<label for="uom_abbr">Description</label>
-								<input type="text" class="form-control" id="description">
+								<label for="branch_abbr">Branch Name</label>
+								<input type="text" class="form-control" id="branch_name">
 							</div>
 
 							<div class="form-group">
-								<label>Type</label>
-								<select class="select2 js-states form-control" id="rm_type">
-								</select>
+								<label for="branch_abbr">Address</label>
+								<textarea class="form-control" rows="3" id="address"  spellcheck="false" style="resize: none;"></textarea>
 							</div>
 
 							<div class="form-group">
-								<label>Unit of Measurement</label>
-								<select class="select2 js-states form-control" id="rm_uom">
-								</select>
+								<label for="branch_abbr">TIN #</label>
+								<input type="text" class="form-control" id="tin">
+							</div>
+
+							<div class="form-group">
+								<label for="branch_abbr">Operated By</label>
+								<input type="text" class="form-control" id="operated_by">
+							</div>
+
+							<div class="form-group">
+								<label for="branch_abbr">Pos Count</label>
+								<input type="text" class="form-control" id="pos_count">
 							</div>
 						</div>
 					</form>
@@ -181,10 +191,10 @@
 				<div class="modal-footer">
 					<div id="footer">
 						<div class="btn-group btn-group-justified" id="form-mode-buttons" role="group" >
-							<button type="button" id="clear_new_uom" class="btn btn-default" data-key-method="cancel"  style="width:49%">
+							<button type="button" id="clear_new_branch" class="btn btn-default" data-key-method="cancel"  style="width:49%">
 								<i class="fa fa-undo"></i>&nbsp; Clear
 							</button>
-							<button type="button" id="newRM_submitBtn" class="btn btn-primary" data-key-method="ok" style="width:49%">
+							<button type="button" id="newbranch_submitBtn" class="btn btn-primary" data-key-method="ok" style="width:49%">
 								<i class="fa fa-save"></i>&nbsp; Save
 							</button>
 						</div>
@@ -196,7 +206,7 @@
 	<!-- modal -->
 
 	<!-- modal [product_detail] -->
-	<div class="modal fade" id="rm_detail_modal" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+	<div class="modal fade" id="branch_detail_modal" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -205,26 +215,34 @@
 					<h4 class="modal-title"><span
 							style="border-radius: 2px; padding: 6px;
             border: 1px solid #008d4c; background-color: #00a65a; color: #FFF";
-							class="fa fa-sliders"></span> &nbsp; <b>Raw Material Detail</b></h4>
+							class="fa fa-sliders"></span> &nbsp; <b>Branch Detail</b></h4>
 				</div>
 				<div class="modal-body">
-					<form role="form" id="detailRMForm">
+					<form role="form" id="detailbranchForm">
 						<div class="box-body">
 							<div class="form-group">
-								<label for="uom_abbr">Description</label>
-								<input type="text" class="form-control" id="update_description">
+								<label for="branch_abbr">Branch Name</label>
+								<input type="text" class="form-control" id="update_branch_name">
 							</div>
 
 							<div class="form-group">
-								<label>Type</label>
-								<select class="select2 js-states form-control" id="update_rm_type">
-								</select>
+								<label for="branch_abbr">Address</label>
+								<textarea class="form-control" rows="3" id="update_address"  spellcheck="false" style="resize: none;"></textarea>
 							</div>
 
 							<div class="form-group">
-								<label>Unit of Measurement</label>
-								<select class="select2 js-states form-control" id="update_rm_uom">
-								</select>
+								<label for="branch_abbr">TIN #</label>
+								<input type="text" class="form-control" id="update_tin">
+							</div>
+
+							<div class="form-group">
+								<label for="branch_abbr">Operated By</label>
+								<input type="text" class="form-control" id="update_operated_by">
+							</div>
+
+							<div class="form-group">
+								<label for="branch_abbr">Pos Count</label>
+								<input type="text" class="form-control" id="update_pos_count">
 							</div>
 						</div>
 					</form>
@@ -232,10 +250,10 @@
 				<div class="modal-footer">
 					<div id="footer">
 						<div class="btn-group btn-group-justified" id="form-mode-buttons" role="group" >
-							<button type="button" id="delete_rm" class="btn btn-danger" style="width:49%">
+							<button type="button" id="delete_branch" class="btn btn-danger" style="width:49%">
 								<i class="fa fa-trash-o"></i>&nbsp; Delete
 							</button>
-							<button type="button" id="updateRM_submitBtn" class="btn btn-primary" data-key-method="ok" style="width:49%">
+							<button type="button" id="updatebranch_submitBtn" class="btn btn-primary" data-key-method="ok" style="width:49%">
 								<i class="fa fa-save"></i>&nbsp; Save
 							</button>
 						</div>
@@ -266,7 +284,7 @@
 						</div>
 						<div class="col-xs-7">
 							<a href="#" class="btn btn-info" data-dismiss="modal">Cancel</a>
-							<a href="#" class="btn btn-danger" id="confirm_delete_rm_btn">Delete</a>
+							<a href="#" class="btn btn-danger" id="confirm_delete_branch_btn">Delete</a>
 						</div>
 					</div>
 				</div>
@@ -321,7 +339,7 @@
 <!-- AdminLTE for demo purposes -->
 <script src="<?php echo base_url(); ?>assets/dist/js/demo.js"></script>
 <script src="<?php echo base_url(); ?>assets/dist/js/app.js"></script>
-<script src="<?php echo base_url(); ?>assets/dist/js/rawmaterial.js"></script>
+<script src="<?php echo base_url(); ?>assets/dist/js/branch.js"></script>
 <script src="<?php echo base_url(); ?>assets/dist/js/select.min.js"></script>
 </body>
 </html>
