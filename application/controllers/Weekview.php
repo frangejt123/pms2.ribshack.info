@@ -28,6 +28,17 @@ class Weekview extends CI_Controller {
 		$totalRecords = $this->modConversion->getAll($param)->num_rows();
 		$totalRecordwithFilter = $totalRecords;
 
+		$period = new DatePeriod(
+			new DateTime($param["datefrom"]),
+			new DateInterval('P1D'),
+			new DateTime($param["dateto"]. ' 23:59:59')
+		);
+
+		$datecount = 0;
+		foreach ($period as $date) {
+			$datecount++;
+		}
+
 		$pmstotal = [];
 
 		foreach($pms as $ind => $row){
@@ -39,7 +50,7 @@ class Weekview extends CI_Controller {
 		if(count($pms) > 0)
 			foreach($convertion as $ind => $row){
 				$week_total = $row["conversion"] * $pmstotal[$row["product_code"]];
-				$week_avg =  $week_total / 7;
+				$week_avg =  $week_total / $datecount;
 
 				if(array_key_exists($row['raw_material_id'], $data)){
 					$data[$row["raw_material_id"]]["week_total"] += $week_total;
@@ -84,26 +95,6 @@ class Weekview extends CI_Controller {
 		$convertion = $this->modConversion->getAll($param)->result_array();
 		$pms = $this->modProductMovement->getTotal($param)->result_array();
 
-		/*
-		 var dataSet = [{
-			  "Latitude": 18.00,
-			  "Longitude": 23.00,
-			  "Name": "Pune"
-			}, {
-			  "Latitude": 14.00,
-			  "Longitude": 24.00,
-			  "Name": "Mumbai"
-			}, {
-			  "Latitude": 34.004654,
-			  "Longitude": -4.005465,
-			  "Name": "Delhi"
-			}, {
-			  "Latitude": 23.004564,
-			  "Longitude": 23.007897,
-			  "Name": "Jaipur"
-		}];
-		 */
-
 		$period = new DatePeriod(
 			new DateTime($param["datefrom"]),
 			new DateInterval('P1D'),
@@ -115,28 +106,44 @@ class Weekview extends CI_Controller {
 		$totalRecords = $this->modConversion->getAll($param)->num_rows();
 		$totalRecordwithFilter = $totalRecords;
 
-//		$pmstotal = [];
-
 		$datedataarray = [];
 
 		foreach($pms as $ind => $row){
 			$datedataarray[$row["product_id"]]['desc'] = $row["description"];
 			$dateformat = date('Ymd', strtotime($row["date"]));
 			$datedataarray[$row["product_id"]]['date'][$dateformat] = $row["pos_total"];
+			$datedataarray[$row["product_id"]]['sales'][$dateformat] = ($row["pos_total"] * $row["price"]);
 		}
 
 		$datatotal = [];
+		$salestotal = [];
+
+		$datecount = 0;
+		foreach ($period as $date) {
+			$datecount++;
+		}
+
 		foreach($datedataarray as $ind => $row){
 			foreach ($row['date'] as $ind2 => $row2) {
 				if (isset($datatotal[$ind]))
 					$datatotal[$ind] += $row2;
 				else
 					$datatotal[$ind] = $row2;
+
+			}
+
+			foreach ($row['sales'] as $ind2 => $row2) {
+				if (isset($salestotal[$ind2]))
+					$salestotal[$ind2] += $row2;
+				else
+					$salestotal[$ind2] = $row2;
+
 			}
 
 			foreach ($period as $date) {
 				$dateStr = $date->format('Ymd');
 				if(!array_key_exists($dateStr, $row['date'])){
+					$salestotal[$dateStr] = 0;
 					$datedataarray[$ind]['date'][$dateStr] = 0;
 				}
 			}
@@ -152,12 +159,27 @@ class Weekview extends CI_Controller {
 			$data[$ind] = [];
 			array_push($data[$ind], $row['desc']);
 			array_push($data[$ind], number_format($datatotal[$ind], 2));
-			array_push($data[$ind], number_format($datatotal[$ind] / 7, 2));
+			array_push($data[$ind], number_format($datatotal[$ind] / $datecount, 2));
 
 			foreach($row['date'] as $ind2 => $row2){
 				array_push($data[$ind], number_format($row2, 2));
 			}
+		}
 
+		if(count($data) > 0) {
+			$weeksales = 0;
+			foreach ($salestotal as $ind => $row) {
+				$weeksales += $row;
+			}
+			ksort($salestotal);
+
+			$salesdata = ['Sales', number_format($weeksales, 2), number_format(($weeksales / $datecount), 2)];
+			foreach ($salestotal as $ind => $row) {
+				$row = number_format($row, 2);
+				array_push($salesdata, $row);
+			}
+
+			array_unshift($data, $salesdata);
 		}
 
 		$aadata = [];
@@ -173,6 +195,5 @@ class Weekview extends CI_Controller {
 		);
 
 		echo json_encode($response);
-
 	}
 }

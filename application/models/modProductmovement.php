@@ -140,7 +140,7 @@ class ModProductmovement extends CI_Model {
 	}
 
 	function getTotal($param){
-		$this->db->select("product_id, SUM(pos_total) as pos_total, period.date, product.description");
+		$this->db->select("product_id, price, SUM(pos_total) as pos_total, period.date, product.description");
 		$this->db->from("product_movement");
 		$this->db->join('period', 'period.id = product_movement.period_id');
 		$this->db->join('product', 'product.id = product_movement.product_id');

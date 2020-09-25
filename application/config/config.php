@@ -23,7 +23,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-$config['base_url'] = 'https://pms2.ribshack.info';
+$config['base_url'] = '/pms2.ribshack.info';//https://pms2.ribshack.info
 
 /*
 |--------------------------------------------------------------------------

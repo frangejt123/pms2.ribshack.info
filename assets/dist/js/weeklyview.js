@@ -7,6 +7,13 @@ $(document).ready(function () {
 		},
 		"showWeekNumbers": true,
 	}).on('apply.daterangepicker', function(ev, picker) {
+		var branch_id = $("select#period_branch").select2('val');
+		if(branch_id == ""){
+			alert("Please select branch");
+			return;
+		}
+
+
 		var startDate = picker.startDate.format('YYYY-MM-DD');
 		var endDate = picker.endDate.format('YYYY-MM-DD');
 
@@ -27,8 +34,6 @@ $(document).ready(function () {
 			$("table#weekly_pms_tbl tbody").empty();
 			$("table#weekly_pms_tbl thead tr").empty();
 		}
-
-
 
 		getTabledata('raw_material_tbl', 0, startDate, endDate);
 		getTabledata('premix_sauce_tbl', 1, startDate, endDate);
