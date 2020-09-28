@@ -110,6 +110,7 @@ class Weekview extends CI_Controller {
 
 		foreach($pms as $ind => $row){
 			$datedataarray[$row["product_id"]]['desc'] = $row["description"];
+			$datedataarray[$row["product_id"]]['parent_id'] = $row["parent_id"];
 			$dateformat = date('Ymd', strtotime($row["date"]));
 			$datedataarray[$row["product_id"]]['date'][$dateformat] = $row["pos_total"];
 			$datedataarray[$row["product_id"]]['sales'][$dateformat] = ($row["pos_total"] * $row["price"]);
@@ -156,13 +157,15 @@ class Weekview extends CI_Controller {
 
 		$data = [];
 		foreach($datedataarray as $ind => $row){
-			$data[$ind] = [];
-			array_push($data[$ind], $row['desc']);
-			array_push($data[$ind], number_format($datatotal[$ind], 2));
-			array_push($data[$ind], number_format($datatotal[$ind] / $datecount, 2));
+			if(is_null($row["parent_id"]) || $row["parent_id"] == ""){
+				$data[$ind] = [];
+				array_push($data[$ind], $row['desc']);
+				array_push($data[$ind], number_format($datatotal[$ind], 2));
+				array_push($data[$ind], number_format($datatotal[$ind] / $datecount, 2));
 
-			foreach($row['date'] as $ind2 => $row2){
-				array_push($data[$ind], number_format($row2, 2));
+				foreach($row['date'] as $ind2 => $row2){
+					array_push($data[$ind], number_format($row2, 2));
+				}
 			}
 		}
 
