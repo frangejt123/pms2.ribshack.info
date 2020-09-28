@@ -114,7 +114,7 @@ class Weekview extends CI_Controller {
 			$datedataarray[$row["product_id"]]['desc'] = $row["description"];
 			$datedataarray[$row["product_id"]]['parent_id'] = $row["parent_id"];
 			$dateformat = date('Ymd', strtotime($row["date"]));
-			//$datedataarray[$row["product_id"]]['date'][$dateformat] = $row["pos_total"];
+			$datedataarray[$row["product_id"]]['date'][$dateformat] = $row["pos_total"];
 
 			if(!is_null($row["parent_id"]) || $row["parent_id"] != ""){
 				if(array_key_exists($row["parent_id"], $childsum)){
@@ -133,100 +133,97 @@ class Weekview extends CI_Controller {
 			}
 
 			if(strpos($row["product_id"], 'SC')) {
-				$price = number_format(($row["price"] * 0.7142828282828283), 3)	;
+				$price = number_format(($row["price"] * 0.7142828282828283), 2)	;
 			};
-
-			$datedataarray[$row["product_id"]]['total'] = $total;
-			$datedataarray[$row["product_id"]]['price'] = $price;
-			$datedataarray[$row["product_id"]]['sales'] = $total * $price;
+			$datedataarray[$row["product_id"]]['sales'][$dateformat] = $total * $price;
 		}
+
+//		foreach($datedataarray as $ind => $row){
+//			print_r($row);
+//			print_r("\n");
+//		}
+
+		$datatotal = [];
+		$salestotal = [];
+
+		$datecount = 0;
+		foreach ($period as $date) {
+			$datecount++;
+		}
+
 		foreach($datedataarray as $ind => $row){
-			print_r($row["desc"]." == ".$row["price"]." * ".$row["total"]." = ".$row["sales"]);
-			print_r("\n");
+			foreach ($row['date'] as $ind2 => $row2) {
+				if (isset($datatotal[$ind]))
+					$datatotal[$ind] += $row2;
+				else
+					$datatotal[$ind] = $row2;
+
+			}
+
+			foreach ($row['sales'] as $ind2 => $row2) {
+				if (isset($salestotal[$ind2]))
+					$salestotal[$ind2] += $row2;
+				else
+					$salestotal[$ind2] = $row2;
+
+			}
+
+			foreach ($period as $date) {
+				$dateStr = $date->format('Ymd');
+				if(!array_key_exists($dateStr, $row['date'])){
+					$salestotal[$dateStr] = 0;
+					$datedataarray[$ind]['date'][$dateStr] = 0;
+				}
+			}
 		}
 
-//
-//		$datatotal = [];
-//		$salestotal = [];
-//
-//		$datecount = 0;
-//		foreach ($period as $date) {
-//			$datecount++;
-//		}
-//
-//		foreach($datedataarray as $ind => $row){
-//			foreach ($row['date'] as $ind2 => $row2) {
-//				if (isset($datatotal[$ind]))
-//					$datatotal[$ind] += $row2;
-//				else
-//					$datatotal[$ind] = $row2;
-//
-//			}
-//
-//			foreach ($row['sales'] as $ind2 => $row2) {
-//				if (isset($salestotal[$ind2]))
-//					$salestotal[$ind2] += $row2;
-//				else
-//					$salestotal[$ind2] = $row2;
-//
-//			}
-//
-//			foreach ($period as $date) {
-//				$dateStr = $date->format('Ymd');
-//				if(!array_key_exists($dateStr, $row['date'])){
-//					$salestotal[$dateStr] = 0;
-//					$datedataarray[$ind]['date'][$dateStr] = 0;
-//				}
-//			}
-//		}
-//
-//		foreach($datedataarray as $ind => $row){
-//			ksort($row['date']);
-//			$datedataarray[$ind]['date'] = $row['date'];
-//		}
-//
-//		$data = [];
-//		foreach($datedataarray as $ind => $row){
-//			if(is_null($row["parent_id"]) || $row["parent_id"] == ""){
-//				$data[$ind] = [];
-//				array_push($data[$ind], $row['desc']);
-//				array_push($data[$ind], number_format($datatotal[$ind], 2));
-//				array_push($data[$ind], number_format($datatotal[$ind] / $datecount, 2));
-//
-//				foreach($row['date'] as $ind2 => $row2){
-//					array_push($data[$ind], number_format($row2, 2));
-//				}
-//			}
-//		}
-//
-//		if(count($data) > 0) {
-//			$weeksales = 0;
-//			foreach ($salestotal as $ind => $row) {
-//				$weeksales += $row;
-//			}
-//			ksort($salestotal);
-//
-//			$salesdata = ['Sales', number_format($weeksales, 2), number_format(($weeksales / $datecount), 2)];
-//			foreach ($salestotal as $ind => $row) {
-//				$row = number_format($row, 2);
-//				array_push($salesdata, $row);
-//			}
-//
-//			array_unshift($data, $salesdata);
-//		}
-//
-//		$aadata = [];
-//		foreach($data as $ind => $row){
-//			array_push($aadata, $row);
-//		}
-//
-//		$response = array(
-//			"draw" => intval($draw),
-//			"iTotalRecords" => $totalRecords,
-//			"iTotalDisplayRecords" => $totalRecordwithFilter,
-//			"aaData" => $aadata
-//		);
-//
-//		echo json_encode($response);
+		foreach($datedataarray as $ind => $row){
+			ksort($row['date']);
+			$datedataarray[$ind]['date'] = $row['date'];
+		}
+
+		$data = [];
+		foreach($datedataarray as $ind => $row){
+			if(is_null($row["parent_id"]) || $row["parent_id"] == ""){
+				$data[$ind] = [];
+				array_push($data[$ind], $row['desc']);
+				array_push($data[$ind], number_format($datatotal[$ind], 2));
+				array_push($data[$ind], number_format($datatotal[$ind] / $datecount, 2));
+
+				foreach($row['date'] as $ind2 => $row2){
+					array_push($data[$ind], number_format($row2, 2));
+				}
+			}
+		}
+
+		if(count($data) > 0) {
+			$weeksales = 0;
+			foreach ($salestotal as $ind => $row) {
+				$weeksales += $row;
+			}
+			ksort($salestotal);
+
+			$salesdata = ['Sales', number_format($weeksales, 2), number_format(($weeksales / $datecount), 2)];
+			foreach ($salestotal as $ind => $row) {
+				$row = number_format($row, 2);
+				array_push($salesdata, $row);
+			}
+
+			array_unshift($data, $salesdata);
+		}
+
+		$aadata = [];
+		foreach($data as $ind => $row){
+			array_push($aadata, $row);
+		}
+
+		$response = array(
+			"draw" => intval($draw),
+			"iTotalRecords" => $totalRecords,
+			"iTotalDisplayRecords" => $totalRecordwithFilter,
+			"aaData" => $aadata
+		);
+
+		echo json_encode($response);
 	}
 }
