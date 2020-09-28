@@ -108,12 +108,29 @@ class Weekview extends CI_Controller {
 
 		$datedataarray = [];
 
+		$childsum = [];
+
 		foreach($pms as $ind => $row){
 			$datedataarray[$row["product_id"]]['desc'] = $row["description"];
 			$datedataarray[$row["product_id"]]['parent_id'] = $row["parent_id"];
 			$dateformat = date('Ymd', strtotime($row["date"]));
 			$datedataarray[$row["product_id"]]['date'][$dateformat] = $row["pos_total"];
-			$datedataarray[$row["product_id"]]['sales'][$dateformat] = ($row["pos_total"] * $row["price"]);
+
+			if(!is_null($row["parent_id"]) || $row["parent_id"] != ""){
+				if(array_key_exists($row["parent_id"], $childsum)){
+					$childsum[$row["parent_id"]] += $row["pos_total"];
+				}else{
+					$childsum[$row["parent_id"]] = $row["pos_total"];
+				}
+			}
+		}
+
+		foreach($pms as $ind => $row){
+			$total = $row["pos_total"];
+			if(is_null($row["parent_id"]) || $row["parent_id"] == "") {
+				$total = $row["pos_total"] - $childsum[$row["product_id"]];
+			}
+			$datedataarray[$row["product_id"]]['sales'][$dateformat] = ($total * $row["price"]);
 		}
 
 		$datatotal = [];
