@@ -345,13 +345,17 @@ $(document).ready(function(){
 			type: 'POST',
 			success: function (data) {
 				if(data == "nodata"){
+					$("#sales_div").hide();
+
 					var tbodytr = '<tr id="row1">'
 						+'<td colspan="7" align="center"><span style="color: #f30"><b>No data to display.</b></span></td>'
 					+'</tr>'
 					$("table#productmovementtable tbody").html(tbodytr);
 				}else{
 					var data = JSON.parse(data);
-					parseTable(data);
+					$("#sales_div").find("h3").html("Sales: "+data["sales"]);
+					$("#sales_div").show();
+					parseTable(data["product"]);
 				}
 			}
 		});
@@ -514,6 +518,7 @@ $(document).ready(function(){
         event.stopPropagation(); // Stop stuff happening
         event.preventDefault(); // Totally stop stuff happening
         var pms_date = $("#pms_date").val();
+		var pms_sales = $("#pms_sales").val();
         var branch_id = $("select#period_branch").select2('val');
 
         var existing_pms_data = $("ul#pms_date_ul").find("li");
@@ -562,6 +567,7 @@ $(document).ready(function(){
 				var data = new FormData();
 				data.append("pms_date", pms_date);
 				data.append("branch_id", branch_id);
+				data.append("sales", pms_sales);
 				if (typeof files !== 'undefined')
 					$.each(files, function (key, value)
 					{

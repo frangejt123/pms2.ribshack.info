@@ -166,7 +166,14 @@
 			}
 		?>
       <div class="clearfix"></div>
-      <br/>
+
+		<div id="sales_div" style="display: none">
+			<div class="box box-success">
+				<div class="box-header">
+					<h3 class="box-title">Sales : 0.00</h3>
+				</div>
+			</div>
+		</div>
 
       <div class="row">
 <!--        <div class="col-lg-2">-->
@@ -213,8 +220,6 @@
   </div>
   <!-- /.content-wrapper -->
 
-
-
 <!-- modal -->
 <div class="modal fade" id="new_pms_modal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog modal-med" role="document">
@@ -252,6 +257,11 @@
 							</div>';
 				}
 				?>
+
+				<div class="input-group" style="width: 380px; margin-left: -15px;">
+					<span class="input-group-addon">&nbsp; &nbsp; Sales &nbsp; &nbsp;</span>
+					<input type="text" class="form-control" id="pms_sales" value="">
+				</div>
 
                 <div class="row">
                     <div id="error_cont" style='display: none;'>

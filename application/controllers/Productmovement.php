@@ -91,7 +91,12 @@ class Productmovement extends CI_Controller {
             }
         }
 
-        echo json_encode(array_values($product));
+
+        $response = array();
+        $response["sales"] = number_format($periodres["sales"], 2);
+        $response["product"] = array_values($product);
+
+        echo json_encode($response);
     }
 
 	public function mergeData() {
@@ -115,6 +120,7 @@ class Productmovement extends CI_Controller {
         $periodParam = array();
         $periodParam["date"] = date("Y-m-d", strtotime($param["pms_date"]));
         $periodParam["status"] = 0;
+		$periodParam["sales"] = $param["sales"];
         $periodParam["branch_id"] = $_SESSION["rgc_access_level"] == 0 ? $param["branch_id"] : $_SESSION["rgc_branch_id"];
         $periodres = $this->modPeriod->insert($periodParam);
 

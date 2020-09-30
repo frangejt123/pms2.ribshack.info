@@ -9,6 +9,7 @@ $(document).ready(function(){
 
 			$.each(res, function(ind, row){
 				tr += '<tr id="'+row["id"]+'">' +
+						'<td>'+row["branch_code"]+'</td>' +
 						'<td>'+row["branch_name"]+'</td>' +
 						'<td>'+row["address"]+'</td>' +
 						'<td>'+row["tin"]+'</td>' +
@@ -27,6 +28,7 @@ $(document).ready(function(){
 	});
 
 	$("#newbranch_submitBtn").on("click", function(){
+		var branch_code = $("input#branch_code").val();
 		var branch_name = $("input#branch_name").val();
 		var address = $("#address").val();
 		var tin = $("input#tin").val();
@@ -34,6 +36,7 @@ $(document).ready(function(){
 		var pos_count = $("input#pos_count").val();
 
 		var data = {
+			branch_code,
 			branch_name,
 			address,
 			tin,
@@ -58,33 +61,44 @@ $(document).ready(function(){
 			});
 			return;
 		}
-
 		$.ajax({
 			method: "POST",
-			data: data,
-			url: baseurl+"/branch/insert",
-			success: function(res){
-				var res = JSON.parse(res);
-				if(res["success"]){
-					var tr = '<tr id="'+res["id"]+'">' +
-							'<td>'+branch_name+'</td>' +
-							'<td>'+address+'</td>' +
-							'<td>'+tin+'</td>' +
-							'<td>'+operated_by+'</td>' +
-							'<td>'+pos_count+'</td>' +
-							'</tr>';
+			data: {branch_code},
+			url: baseurl + "/branch/checkcode",
+			success: function (res) {
+				if (res > 0) {
+					alert("Item code already exist.");
+				} else {
+					$.ajax({
+						method: "POST",
+						data: data,
+						url: baseurl+"/branch/insert",
+						success: function(res){
+							var res = JSON.parse(res);
+							if(res["success"]){
+								var tr = '<tr id="'+res["id"]+'">' +
+									'<td>'+branch_code+'</td>' +
+									'<td>'+branch_name+'</td>' +
+									'<td>'+address+'</td>' +
+									'<td>'+tin+'</td>' +
+									'<td>'+operated_by+'</td>' +
+									'<td>'+pos_count+'</td>' +
+									'</tr>';
 
-					$("table#branchtable tbody").prepend(tr);
-					$("div#new_branch_modal").modal("hide");
+								$("table#branchtable tbody").prepend(tr);
+								$("div#new_branch_modal").modal("hide");
 
-					$.bootstrapGrowl("&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Changes successfully saved!", {
-						type: "success",
-						allow_dismiss: false,
-						width: 300
+								$.bootstrapGrowl("&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Changes successfully saved!", {
+									type: "success",
+									allow_dismiss: false,
+									width: 300
+								});
+							}
+						}
 					});
 				}
 			}
-		})
+		});
 	});
 
 	/* on row click */
@@ -92,12 +106,14 @@ $(document).ready(function(){
 		var tds = $(this).find("td");
 		var id = $(this).attr("id");
 
-		var branch_name = $(tds[0]).html();
-		var address = $(tds[1]).html();
-		var tin = $(tds[2]).html();
-		var operated_by = $(tds[3]).html();
-		var pos_count = $(tds[4]).html();
+		var branch_code = $(tds[0]).html();
+		var branch_name = $(tds[1]).html();
+		var address = $(tds[2]).html();
+		var tin = $(tds[3]).html();
+		var operated_by = $(tds[4]).html();
+		var pos_count = $(tds[5]).html();
 
+		$("input#update_branch_code").val(branch_code);
 		$("input#update_branch_name").val(branch_name);
 		$("#update_address").val(address);
 		$("input#update_tin").val(tin);
@@ -109,6 +125,7 @@ $(document).ready(function(){
 	});
 
 	$("#updatebranch_submitBtn").on("click", function(){
+		var branch_code = $("input#update_branch_code").val();
 		var branch_name = $("input#update_branch_name").val();
 		var address = $("#update_address").val();
 		var tin = $("input#update_tin").val();
@@ -118,6 +135,7 @@ $(document).ready(function(){
 		var id = $("div#branch_detail_modal").data("id");
 		var data = {
 			id,
+			branch_code,
 			branch_name,
 			address,
 			tin,
@@ -145,27 +163,40 @@ $(document).ready(function(){
 
 		$.ajax({
 			method: "POST",
-			data: data,
-			url: baseurl+"/branch/update",
-			success: function(res){
-				var res = JSON.parse(res);
-				if(res["success"]){
-					var td = '<td>'+branch_name+'</td>' +
-						'<td>'+address+'</td>' +
-						'<td>'+tin+'</td>' +
-						'<td>'+operated_by+'</td>' +
-						'<td>'+pos_count+'</td>';
+			data: {id, branch_code},
+			url: baseurl + "/branch/checkcode",
+			success: function (res) {
+				if (res > 0) {
+					alert("Item code already exist.");
+				} else {
+					$.ajax({
+						method: "POST",
+						data: data,
+						url: baseurl+"/branch/update",
+						success: function(res){
+							var res = JSON.parse(res);
+							if(res["success"]){
+								var td = '<td>'+branch_code+'</td>' +
+									'<td>'+branch_name+'</td>' +
+									'<td>'+address+'</td>' +
+									'<td>'+tin+'</td>' +
+									'<td>'+operated_by+'</td>' +
+									'<td>'+pos_count+'</td>';
 
-					$("table#branchtable tbody tr#"+id).html(td);
-					$("div#branch_detail_modal").modal("hide");
+								$("table#branchtable tbody tr#"+id).html(td);
+								$("div#branch_detail_modal").modal("hide");
 
-					$.bootstrapGrowl("&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Changes successfully updated!", {
-						type: "success",
-						width: 300
+								$.bootstrapGrowl("&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Changes successfully updated!", {
+									type: "success",
+									width: 300
+								});
+							}
+						}
 					});
 				}
 			}
 		});
+
 	});
 
 	/*delete record*/

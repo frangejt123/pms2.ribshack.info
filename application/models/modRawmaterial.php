@@ -9,6 +9,7 @@ class ModRawmaterial extends CI_Model {
 	private $TABLE = "raw_material",
 		$FIELDS = array(
 		"id" => "raw_material.id",
+		"itemcode" => "raw_material.itemcode",
 		"description" => "raw_material.description",
 		"type" => "raw_material.type",
 		"uom" => "raw_material.uom"
@@ -111,7 +112,15 @@ class ModRawmaterial extends CI_Model {
 		return $result;
 	}
 
+	function checkcode($param) {
+		$this->db->select("id");
+		$this->db->from("raw_material");
+		if(isset($param["id"])){
+			$this->db->where('raw_material.id !=', $param["id"]);
+		}
+		$this->db->where('UCASE(raw_material.itemcode) =', $param["itemcode"]);
+		$query = $this->db->get();
 
-
-
+		return $query;
+	}
 }

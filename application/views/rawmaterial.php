@@ -127,6 +127,7 @@
 							<table class="table table-hover" id="rawmaterialtable">
 								<thead>
 								<tr>
+									<th>Item Code</th>
 									<th>Description</th>
 									<th>Type</th>
 									<th>Uom</th>
@@ -159,6 +160,11 @@
 				<div class="modal-body">
 					<form role="form" id="newRMForm">
 						<div class="box-body">
+							<div class="form-group">
+								<label for="itemcode">Item Code</label>
+								<input type="text" class="form-control" id="rm_itemcode">
+							</div>
+
 							<div class="form-group">
 								<label for="uom_abbr">Description</label>
 								<input type="text" class="form-control" id="description">
@@ -211,7 +217,12 @@
 					<form role="form" id="detailRMForm">
 						<div class="box-body">
 							<div class="form-group">
-								<label for="uom_abbr">Description</label>
+								<label for="update_itemcode">Item Code</label>
+								<input type="text" class="form-control" id="update_rm_itemcode">
+							</div>
+
+							<div class="form-group">
+								<label for="update_description">Description</label>
 								<input type="text" class="form-control" id="update_description">
 							</div>
 

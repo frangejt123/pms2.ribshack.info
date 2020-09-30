@@ -127,6 +127,7 @@
 							<table class="table table-hover" id="branchtable">
 								<thead>
 								<tr>
+									<th>Branch Code</th>
 									<th>Branch Name</th>
 									<th>Address</th>
 									<th>TIN #</th>
@@ -161,6 +162,11 @@
 				<div class="modal-body">
 					<form role="form" id="newbranchForm">
 						<div class="box-body">
+							<div class="form-group">
+								<label for="branch_abbr">Branch Name</label>
+								<input type="text" class="form-control" id="branch_code">
+							</div>
+
 							<div class="form-group">
 								<label for="branch_abbr">Branch Name</label>
 								<input type="text" class="form-control" id="branch_name">
@@ -220,6 +226,11 @@
 				<div class="modal-body">
 					<form role="form" id="detailbranchForm">
 						<div class="box-body">
+							<div class="form-group">
+								<label for="branch_abbr">Branch Name</label>
+								<input type="text" class="form-control" id="update_branch_code">
+							</div>
+
 							<div class="form-group">
 								<label for="branch_abbr">Branch Name</label>
 								<input type="text" class="form-control" id="update_branch_name">

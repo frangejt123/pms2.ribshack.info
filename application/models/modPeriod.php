@@ -11,7 +11,8 @@ class ModPeriod extends CI_Model {
                 "id" => "period.id",
                 "date" => "period.date",
                 "status" => "period.status",
-                "branch_id" => "period.branch_id"
+                "branch_id" => "period.branch_id",
+				"sales" => "period.sales"
     );
 
     function __construct() {

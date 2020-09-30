@@ -9,6 +9,7 @@ class ModBranch extends CI_Model {
     private $TABLE = "branch",
             $FIELDS = array(
                 "id" => "branch.branch_id",
+				"branch_code" => "branch.branch_code",
                 "branch_name" => "branch.branch_name",
                 "address" => "branch.address",
                 "tin" => "branch.tin",
@@ -94,7 +95,6 @@ class ModBranch extends CI_Model {
         return $result;
     }
 
-
     function delete($param) {
 
         $result = array();
@@ -112,7 +112,17 @@ class ModBranch extends CI_Model {
         return $result;
     }
 
+	function checkcode($param) {
+		$this->db->select("branch_id");
+		$this->db->from("branch");
+		if(isset($param["id"])){
+			$this->db->where('branch.branch_id !=', $param["id"]);
+		}
+		$this->db->where('UCASE(branch.branch_code) =', $param["branchcode"]);
+		$query = $this->db->get();
 
+		return $query;
+	}
 
 
 }

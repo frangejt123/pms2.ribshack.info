@@ -41,4 +41,13 @@ class Branch extends CI_Controller {
 		$res = $this->modBranch->delete($param);
 		echo json_encode($res);
 	}
+
+	public function checkcode(){
+	$param = $this->input->post(NULL, TRUE);
+	$this->load->model('modBranch', "", TRUE);
+	$param["branchcode"] = ucwords($param["branch_code"]);
+
+	$res = $this->modBranch->checkcode($param)->num_rows();
+	echo $res;
+}
 }

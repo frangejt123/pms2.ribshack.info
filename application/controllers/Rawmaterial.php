@@ -55,4 +55,13 @@ class Rawmaterial extends CI_Controller {
 		$res = $this->modRawmaterial->delete($param);
 		echo json_encode($res);
 	}
+
+	public function checkcode(){
+		$param = $this->input->post(NULL, TRUE);
+		$this->load->model('modRawmaterial', "", TRUE);
+		$param["itemcode"] = ucwords($param["itemcode"]);
+
+		$res = $this->modRawmaterial->checkcode($param)->num_rows();
+		echo $res;
+	}
 }

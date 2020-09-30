@@ -11,6 +11,7 @@ $(document).ready(function(){
 
 			$.each(res, function(ind, row){
 				tr += '<tr id="'+row["id"]+'">' +
+					'<td>'+row["itemcode"]+'</td>'+
 					'<td>'+row["description"]+'</td>'+
 					'<td id="'+row["type"]+'">'+type[row["type"]]+'</td>' +
 					'<td id="'+row["uom"]+'">'+row["uom_description"]+'</td>' +
@@ -40,6 +41,7 @@ $(document).ready(function(){
 		var description = $("input#description").val();
 		var type = $("#rm_type").val();
 		var uom = $("#rm_uom").val();
+		var itemcode = $("#rm_itemcode").val();
 
 		var type_description = $("select#rm_type option:selected").html();
 		var uom_description = $("select#rm_uom option:selected").html();
@@ -70,28 +72,40 @@ $(document).ready(function(){
 
 		$.ajax({
 			method: "POST",
-			data: data,
-			url: baseurl+"/rawmaterial/insert",
-			success: function(res){
-				var res = JSON.parse(res);
-				if(res["success"]){
-					var tr = '<tr id="'+res["id"]+'">' +
-								'<td>'+description+'</td>' +
-								'<td id="'+type+'">'+type_description+'</td>' +
-								'<td id="'+uom+'">'+uom_description+'</td>' +
-						'</tr>';
+			data: {itemcode},
+			url: baseurl + "/rawmaterial/checkcode",
+			success: function (res) {
+				if (res > 0) {
+					alert("Item code already exist.");
+				} else {
+					$.ajax({
+						method: "POST",
+						data: data,
+						url: baseurl+"/rawmaterial/insert",
+						success: function(res){
+							var res = JSON.parse(res);
+							if(res["success"]){
+								var tr = '<tr id="'+res["id"]+'">' +
+									'<td>'+itemcode+'</td>' +
+									'<td>'+description+'</td>' +
+									'<td id="'+type+'">'+type_description+'</td>' +
+									'<td id="'+uom+'">'+uom_description+'</td>' +
+									'</tr>';
 
-					$("table#rawmaterialtable tbody").prepend(tr);
-					$("div#new_rm_modal").modal("hide");
+								$("table#rawmaterialtable tbody").prepend(tr);
+								$("div#new_rm_modal").modal("hide");
 
-					$.bootstrapGrowl("&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Changes successfully saved!", {
-						type: "success",
-						allow_dismiss: false,
-						width: 300
+								$.bootstrapGrowl("&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Changes successfully saved!", {
+									type: "success",
+									allow_dismiss: false,
+									width: 300
+								});
+							}
+						}
 					});
 				}
 			}
-		})
+		});
 	});
 
 	/* on row click */
@@ -106,10 +120,12 @@ $(document).ready(function(){
 		var id = $("div#rm_detail_modal").data("id");
 		var tds = $("table#rawmaterialtable tbody tr#"+id).find("td");
 
-		var description = $(tds[0]).html();
-		var typeval = $(tds[1]).attr("id");
-		var uomval = $(tds[2]).attr("id");
+		var itemcode = $(tds[0]).html();
+		var description = $(tds[1]).html();
+		var typeval = $(tds[2]).attr("id");
+		var uomval = $(tds[3]).attr("id");
 
+		$("input#update_rm_itemcode").val(itemcode);
 		$("input#update_description").val(description);
 		populateSelect2(typeval, uomval);
 	});
@@ -119,6 +135,7 @@ $(document).ready(function(){
 		var description = $("input#update_description").val();
 		var type = $("#update_rm_type").val();
 		var uom = $("#update_rm_uom").val();
+		var itemcode = $("#update_rm_itemcode").val();
 
 		var type_description = $("select#update_rm_type option:selected").html();
 		var uom_description = $("select#update_rm_uom option:selected").html();
@@ -151,21 +168,33 @@ $(document).ready(function(){
 
 		$.ajax({
 			method: "POST",
-			data: d,
-			url: baseurl+"/rawmaterial/update",
+			data: {id, itemcode},
+			url: baseurl+"/rawmaterial/checkcode",
 			success: function(res){
-				var res = JSON.parse(res);
-				if(res["success"]){
-					var td = '<td>'+description+'</td>' +
-						'<td id="'+type+'">'+type_description+'</td>' +
-						'<td id="'+uom+'">'+uom_description+'</td>';
+				if(res > 0){
+					alert("Item code already exist.");
+				}else{
+					$.ajax({
+						method: "POST",
+						data: d,
+						url: baseurl+"/rawmaterial/update",
+						success: function(res){
+							var res = JSON.parse(res);
+							if(res["success"]){
+								var td = '<td>'+itemcode+'</td>' +
+									'<td>'+description+'</td>' +
+									'<td id="'+type+'">'+type_description+'</td>' +
+									'<td id="'+uom+'">'+uom_description+'</td>';
 
-					$("table#rawmaterialtable tbody tr#"+id).html(td);
-					$("div#rm_detail_modal").modal("hide");
+								$("table#rawmaterialtable tbody tr#"+id).html(td);
+								$("div#rm_detail_modal").modal("hide");
 
-					$.bootstrapGrowl("&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Changes successfully updated!", {
-						type: "success",
-						width: 300
+								$.bootstrapGrowl("&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Changes successfully updated!", {
+									type: "success",
+									width: 300
+								});
+							}
+						}
 					});
 				}
 			}
