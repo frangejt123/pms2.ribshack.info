@@ -85,6 +85,7 @@ class Weekview extends CI_Controller {
 
 	public function getTotalpms(){
 		$this->load->model('modConversion', "", TRUE);
+		$this->load->model('modPeriod', "", TRUE);
 		$this->load->model('modProductMovement', "", TRUE);
 		$param = $this->input->post(NULL, "true");
 
@@ -92,8 +93,9 @@ class Weekview extends CI_Controller {
 		$param["datefrom"] = $param["startDate"];
 		$param["dateto"] = $param["endDate"];
 
-		$convertion = $this->modConversion->getAll($param)->result_array();
+		//$convertion = $this->modConversion->getAll($param)->result_array();
 		$pms = $this->modProductMovement->getTotal($param)->result_array();
+		$perioddata = $this->modPeriod->getSales($param)->result_array();
 
 		$period = new DatePeriod(
 			new DateTime($param["datefrom"]),
@@ -117,10 +119,10 @@ class Weekview extends CI_Controller {
 			$datedataarray[$row["product_id"]]['date'][$dateformat] = $row["pos_total"];
 
 			if(!is_null($row["parent_id"]) || $row["parent_id"] != ""){
-				if(array_key_exists($row["parent_id"], $childsum)){
-					$childsum[$row["parent_id"]] += $row["pos_total"];
+				if(array_key_exists($row["parent_id"].$dateformat, $childsum)){
+					$childsum[$row["parent_id"].$dateformat] += $row["pos_total"];
 				}else{
-					$childsum[$row["parent_id"]] = $row["pos_total"];
+					$childsum[$row["parent_id"].$dateformat] = $row["pos_total"];
 				}
 			}
 		}
@@ -128,20 +130,16 @@ class Weekview extends CI_Controller {
 		foreach($pms as $ind => $row){
 			$total = $row["pos_total"];
 			$price = $row["price"];
+			$dateformat = date('Ymd', strtotime($row["date"]));
 			if(is_null($row["parent_id"]) || $row["parent_id"] == "") {
-				$total = $row["pos_total"] - $childsum[$row["product_id"]];
+				$total = $row["pos_total"] - $childsum[$row["product_id"].$dateformat];
 			}
 
 			if(strpos($row["product_id"], 'SC')) {
-				$price = number_format(($row["price"] * 0.7142828282828283), 2)	;
+				$price = number_format(($row["price"] * 0.8) * 1.12, 2)	;
 			};
 			$datedataarray[$row["product_id"]]['sales'][$dateformat] = $total * $price;
 		}
-
-//		foreach($datedataarray as $ind => $row){
-//			print_r($row);
-//			print_r("\n");
-//		}
 
 		$datatotal = [];
 		$salestotal = [];
@@ -149,6 +147,12 @@ class Weekview extends CI_Controller {
 		$datecount = 0;
 		foreach ($period as $date) {
 			$datecount++;
+		}
+
+		$sortedperiod = [];
+		foreach($perioddata as $ind => $row){
+			$dateformat = date('Ymd', strtotime($row["date"]));
+			$sortedperiod[$dateformat] = $row["sales"];
 		}
 
 		foreach($datedataarray as $ind => $row){
@@ -172,6 +176,7 @@ class Weekview extends CI_Controller {
 				$dateStr = $date->format('Ymd');
 				if(!array_key_exists($dateStr, $row['date'])){
 					$salestotal[$dateStr] = 0;
+					$sortedperiod[$dateStr] = 0;
 					$datedataarray[$ind]['date'][$dateStr] = 0;
 				}
 			}
@@ -196,6 +201,8 @@ class Weekview extends CI_Controller {
 			}
 		}
 
+		ksort($sortedperiod);
+
 		if(count($data) > 0) {
 			$weeksales = 0;
 			foreach ($salestotal as $ind => $row) {
@@ -203,13 +210,26 @@ class Weekview extends CI_Controller {
 			}
 			ksort($salestotal);
 
-			$salesdata = ['Sales', number_format($weeksales, 2), number_format(($weeksales / $datecount), 2)];
+			$salesdata = ['POS Sales', number_format($weeksales, 2), number_format(($weeksales / $datecount), 2)];
 			foreach ($salestotal as $ind => $row) {
 				$row = number_format($row, 2);
 				array_push($salesdata, $row);
 			}
-
 			array_unshift($data, $salesdata);
+
+			$actualweeksales = 0;
+			foreach ($sortedperiod as $ind => $row) {
+				$actualweeksales += $row;
+			}
+
+			$newperioddata = ['Actual Sales', number_format($actualweeksales, 2), number_format(($actualweeksales / $datecount), 2)];
+			foreach ($sortedperiod as $ind => $row) {
+				$row = number_format($row, 2);
+				array_push($newperioddata, $row);
+			}
+
+			array_unshift($data, $newperioddata);
+
 		}
 
 		$aadata = [];

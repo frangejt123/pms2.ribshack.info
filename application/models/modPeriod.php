@@ -122,5 +122,15 @@ class ModPeriod extends CI_Model {
 		return $query;
 	}
 
+	function getSales($param){
+		$this->db->select("`period.sales`, `period.date`");
+		$this->db->from("period");
+		$this->db->where('period.date >=', $param["datefrom"]);
+		$this->db->where('period.date <=', $param["dateto"]);
+		$query = $this->db->get();
+
+		return $query;
+	}
+
 
 }
