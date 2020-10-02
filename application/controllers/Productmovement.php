@@ -93,6 +93,7 @@ class Productmovement extends CI_Controller {
 
 
         $response = array();
+		$response["id"] = $periodres["id"];
         $response["sales"] = number_format($periodres["sales"], 2);
         $response["product"] = array_values($product);
 
@@ -309,16 +310,18 @@ class Productmovement extends CI_Controller {
 
         $post_data = array();
 
-        $file0 = isset($_FILES["csvfile0"]) ? $_FILES["csvfile0"] : null;
-        $file1 = isset($_FILES["csvfile1"]) ? $_FILES["csvfile1"] : null;
-        $file2 = isset($_FILES["csvfile2"]) ? $_FILES["csvfile2"] : null;
-        $csv_data = $this->mergeCSV($file0, $file1, $file2);//
- 
+		$file0 = isset($_FILES["csvfile0"]) ? $_FILES["csvfile0"] : null;
+		$file1 = isset($_FILES["csvfile1"]) ? $_FILES["csvfile1"] : null;
+		$file2 = isset($_FILES["csvfile2"]) ? $_FILES["csvfile2"] : null;
+		$file3 = isset($_FILES["csvfile3"]) ? $_FILES["csvfile3"] : null;
+		$file4 = isset($_FILES["csvfile4"]) ? $_FILES["csvfile4"] : null;
+		$csv_data = $this->mergeCSV($file0, $file1, $file2, $file3, $file4);//
+
         $productList = $this->modProduct->getAll($param)->result_array();
 
         $data = array();
         //ACTUAL - POS SOLD = DISCREPANCY
-        
+
         foreach($productList as $ind => $row){
             $p["period_id"] = $param["period_id"];
             $p["product_id"] = $row["id"];
@@ -332,7 +335,19 @@ class Productmovement extends CI_Controller {
             $r["discrepancy"] = 0;
             $r["id"] = $pmsrow["id"];
             if(array_key_exists($row["id"], $csv_data)){
-                $r["pos_sold"] = $csv_data[$row["id"]]["qty"];
+
+				if (!is_null($file0) || !is_null($file1) || !is_null($file2) || !is_null($file3) || !is_null($file4)){
+					if (array_key_exists($row["id"], $csv_data)) {
+						$r["pos1"] = isset($csv_data[$row["id"]]["pos1"]) ? $csv_data[$row["id"]]["pos1"] : 0;
+						$r["pos2"] = isset($csv_data[$row["id"]]["pos2"]) ? $csv_data[$row["id"]]["pos2"] : 0;
+						$r["pos3"] = isset($csv_data[$row["id"]]["pos3"]) ? $csv_data[$row["id"]]["pos3"] : 0;
+						$r["pos4"] = isset($csv_data[$row["id"]]["pos4"]) ? $csv_data[$row["id"]]["pos4"] : 0;
+						$r["pos5"] = isset($csv_data[$row["id"]]["pos5"]) ? $csv_data[$row["id"]]["pos5"] : 0;
+						$r["pos_total"] = $csv_data[$row["id"]]["qty"];
+					}
+				}
+
+
                 if(is_null($row["parent_id"]))
                     $r["discrepancy"] = $actual - abs($r["pos_sold"]);
                 else
@@ -345,10 +360,10 @@ class Productmovement extends CI_Controller {
         $result = array();
         $error = 0;
 
-        // print("<pre>");
-        // print_r($data);
-        // print("</pre>");
-
+//         print("<pre>");
+//         print_r($data);
+//         print("</pre>");
+//
         foreach($data as $ind => $row){
             $res = $this->modProductmovement->update($row);
             if(!$res["success"]){
@@ -357,8 +372,9 @@ class Productmovement extends CI_Controller {
             }
         }
 
-        if($error == 0)
-            $result["success"] = true;
+        if($error == 0) {
+			$result["success"] = true;
+		}
         echo json_encode($result);
 
     }
@@ -462,4 +478,12 @@ class Productmovement extends CI_Controller {
 
         $this->load->view('report/product_movement_report', $d);
     }
+
+	public function updateSales(){
+		$param = $this->input->post(NULL, TRUE);
+		$this->load->model('modPeriod', "", TRUE);
+		$result = $this->modPeriod->update($param);
+
+		print_r(json_encode($result));
+	}
 }

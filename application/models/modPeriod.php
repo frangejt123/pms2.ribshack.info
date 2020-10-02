@@ -84,6 +84,10 @@ class ModPeriod extends CI_Model {
 
         if ($this->db->update('period', $data)) {
             $result["success"] = true;
+
+			if(isset($param['sales'])){
+				$result["sales"] = number_format($param['sales'], 2);
+			}
         } else {
             $result["success"] = false;
             $result["error_id"] = $this->db->_error_number();

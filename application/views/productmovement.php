@@ -149,8 +149,8 @@
           <i class="fa fa-plus"></i>&nbsp; New Product Movement</button>
       </span>
       <span class="pull-right">
-        <button type="button" class="btn btn-success disabled" id="complete_pms_btn">
-          <i class="fa fa-check"></i>&nbsp; Complete</button>&nbsp; &nbsp;
+        <button type="button" class="btn btn-success disabled" id="update_sales_btn">
+          <i class="fa fa-dollar"></i>&nbsp; Update Sales</button>&nbsp; &nbsp;
       </span>
       <span class="btn-separator pull-right"></span>
       <span class="pull-right">
@@ -317,6 +317,7 @@
 							</div>';
 					}
                 ?>
+
                 <div class="row">
                     <div id="error_cont" style='display: none;'>
                     </div>
@@ -338,6 +339,45 @@
         </div>
       </div>
     </div>
+</div>
+<!-- modal -->
+
+
+<!-- modal -->
+<div class="modal fade" id="update_sales_modal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog modal-med" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">×</span></button>
+				<h4 class="modal-title"><span style="border-radius: 2px; padding: 6px; border: 1px solid #056a3c; background-color: #00a65a; color: #FFF";
+											  class="fa fa-dollar"></span> &nbsp; <b>Update Actual Sales</b></h4>
+			</div>
+			<div class="modal-body">
+					<div class="input-group">
+						<span class="input-group-addon">&nbsp; &nbsp; Sales &nbsp; &nbsp;</span>
+						<input type="text" class="form-control" id="update_pms_sales_inp" value="">
+					</div>
+
+					<div class="row">
+						<div id="error_cont" style='display: none;'>
+						</div>
+					</div>
+			</div>
+			<div class="modal-footer">
+				<div id="footer">
+					<div class="btn-group btn-group-justified" id="form-mode-buttons" role="group">
+						<button type="button" id="clear_pms_sales" class="btn btn-default" data-key-method="cancel"  style="width:45%">
+							<i class="fa fa-trash-o"></i>&nbsp; Clear
+						</button>
+						<button type="button" id="save_pms_sales" class="btn btn-primary" data-key-method="ok" style="width:53%;margin-right: 2px;">
+							<i class="fa fa-save"></i>&nbsp; Save
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 <!-- modal -->
 

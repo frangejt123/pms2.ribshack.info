@@ -140,7 +140,7 @@ class ModProductmovement extends CI_Model {
 	}
 
 	function getTotal($param){
-		$this->db->select("product_id, price, SUM(pos_total) as pos_total, period.date, product.description, parent_id");
+		$this->db->select("product_id, price, SUM(pos_total) as pos_total, period.date, product.description, parent_id, product.allow_weekview");
 		$this->db->from("product_movement");
 		$this->db->join('period', 'period.id = product_movement.period_id');
 		$this->db->join('product', 'product.id = product_movement.product_id');
@@ -152,8 +152,10 @@ class ModProductmovement extends CI_Model {
 			$this->db->where('period.branch_id =', $param["branch_id"]);
 		}
 		//$this->db->where('product.parent_id =', NULL);
+//		$this->db->where('product.allow_weekview =', '1');
 		$this->db->where('period.date >=', $param["datefrom"]);
 		$this->db->where('period.date <=', $param["dateto"]);
+		$this->db->order_by('product.description', 'ASC');
 		$query = $this->db->get();
 
 		return $query;

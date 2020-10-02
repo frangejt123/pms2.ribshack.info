@@ -1,4 +1,7 @@
 $(document).ready(function(){
+	//initialize global variable
+	var selectedid;
+
     $('.select2#period_branch').select2({
         placeholder: "Select a branch"
     });
@@ -48,11 +51,29 @@ $(document).ready(function(){
         if($(this).hasClass("disabled"))
             return;
 
-      var selectedid = $("ul#pms_date_ul").find("li.activeli").attr("id");
+      //var selectedid = $("ul#pms_date_ul").find("li.activeli").attr("id");
       $("a#confirm_trigger_btn").trigger("click");
-      $('#confirm_modal').data("eid", selectedid);
+      //$('#confirm_modal').data("eid", selectedid);
 
     });
+
+	$("#update_sales_btn").on("click", function(){
+		if($(this).hasClass("disabled"))
+			return;
+
+		$("div#update_sales_modal").modal("show");
+	});
+
+	$("div#update_sales_modal, #new_pms_modal").on("shown.bs.modal", function(){
+		$("#update_pms_sales_inp, #pms_sales").on("blur", function(e){
+			var value = $(this).val();
+
+			var actualNumber = +value.replace(/,/g, '');
+			var formatted = actualNumber.toLocaleString('en-US', {maximumFractionDigits: 2});
+
+			$(this).val(formatted);
+		}).ForceNumericOnly();
+	});
 
     $("#print_pms_btn").on("click", function(){
         var selectedid = $("ul#pms_date_ul").find("li.activeli").attr("id");
@@ -67,98 +88,6 @@ $(document).ready(function(){
         csvfiles = [];
         updatecsvfiles = [];
     });
-
-    /* load period when selecting branch for administrator */
-    // $('.select2#period_branch').on('select2:select', function(e){
-    //     $("button#new_pms_btn").removeClass("disabled");
-	//
-    //     var data = e.params.data;
-    //     var d = {"branch_id": data["id"]};
-    //     /* LOAD PERIOD DATA */
-    //     $.ajax({
-    //         url: baseurl + "/productmovement/getperiod",
-    //         data: d,
-    //         type: 'POST',
-    //         success: function (data){
-    //             var data = JSON.parse(data);
-    //             var li = "";
-    //             $.each(data, function(ind, row){
-    //                 var status = "";
-    //                 if(row["status"] == 1){
-    //                     status = " complete_pms";
-    //                 }
-    //                 li += "<li class='list-group-item"+status+"' id='pmsli_"+row["id"]+"'>"+row["date"]+"</li>";
-    //             });
-    //             $("table#productmovementtable tbody").html('<tr id="row1"><td colspan="7" align="center"><font style="color: #ff3300"><b>No data to display.</b></font></td></tr>');
-    //             if(data.length > 0){
-    //                 $("ul#pms_date_ul").html(li);
-    //             }else{
-    //                 $("ul#pms_date_ul").html("<li class='list-group-item activeli'><b>No records found.</b></li>");
-    //             }
-    //         }
-    //     });
-    //     /* LOAD PERIOD DATA */
-    // });
-    // /* end */
-    // if(access_level == 1){
-    //     /* LOAD PERIOD DATA */
-    //     $.ajax({
-    //         url: baseurl + "/productmovement/getperiod",
-    //         type: 'POST',
-    //         success: function (data){
-    //             var data = JSON.parse(data);
-    //             var li = "";
-    //             $.each(data, function(ind, row){
-    //                 var status = "";
-    //                 if(row["status"] == 1){
-    //                     status = " complete_pms";
-    //                 }
-    //                 li += "<li class='list-group-item"+status+"' id='pmsli_"+row["id"]+"'>"+row["date"]+"</li>";
-    //             });
-    //             if(data.length > 0){
-    //                 $("ul#pms_date_ul").html(li);
-    //             }else{
-    //                 $("ul#pms_date_ul").html("<li class='list-group-item activeli'><b>No records found.</b></li>");
-    //             }
-    //         }
-    //     });
-    //     /* LOAD PERIOD DATA */
-    // }else{
-    //     $.ajax({
-    //         method: "POST",
-    //         url: baseurl+"/branch/getAll",
-    //         success: function(res){
-    //             var res = JSON.parse(res);
-    //             var data = [{"id":"","text":""}];
-    //             $.each(res, function(i, r){
-    //                 data.push({"id":r["id"],"text":r["branch_name"]});
-    //             });
-	//
-	//
-    //              $('.select2#period_branch').select2({
-    //                 placeholder: "Select a branch",
-    //                 data: data
-    //              });
-    //         }
-    //     });
-    //     $("ul#pms_date_ul").html("<li class='list-group-item activeli'><b>No records found.</b></li>");
-    // }
-
-    // $("ul#pms_date_ul").on("click", "li", function(){
-    //     var id = $(this).attr("id");
-    //     $("ul#pms_date_ul li").removeClass("activeli");
-    //     $(this).addClass("activeli");
-	//
-    //     if(!$(this).hasClass("complete_pms"))
-    //         $("#complete_pms_btn, #update_pms_btn, #delete_pms_btn").removeClass("disabled");
-    //     else
-    //         $("#complete_pms_btn, #update_pms_btn, #delete_pms_btn").addClass("disabled");
-	//
-    //     $("#print_pms_btn").removeClass("disabled");
-	//
-    //     var d = {"period_id": id.split("_")[1]};
-    //
-    // });
 
 	$.ajax({
 		method: "POST",
@@ -351,10 +280,26 @@ $(document).ready(function(){
 						+'<td colspan="7" align="center"><span style="color: #f30"><b>No data to display.</b></span></td>'
 					+'</tr>'
 					$("table#productmovementtable tbody").html(tbodytr);
+
+					// if(!$(this).hasClass("complete_pms"))
+					// 	$("#complete_pms_btn, #update_pms_btn, #delete_pms_btn").removeClass("disabled");
+					// else
+					$("#complete_pms_btn, #update_pms_btn, #delete_pms_btn").addClass("disabled");
+
+					$("#print_pms_btn").addClass("disabled");
+
 				}else{
 					var data = JSON.parse(data);
 					$("#sales_div").find("h3").html("Sales: "+data["sales"]);
 					$("#sales_div").show();
+
+					//if(!$(this).hasClass("complete_pms"))
+					$("#update_sales_btn, #update_pms_btn, #delete_pms_btn").removeClass("disabled");
+					// else
+					// 	$("#complete_pms_btn, #update_pms_btn, #delete_pms_btn").addClass("disabled");
+
+					$("#print_pms_btn").removeClass("disabled");
+					selectedid = data["id"];
 					parseTable(data["product"]);
 				}
 			}
@@ -442,7 +387,7 @@ $(document).ready(function(){
     function uploadupdateFiles(event) {
         event.stopPropagation(); // Stop stuff happening
         event.preventDefault(); // Totally stop stuff happening
-        var period_id = $("ul#pms_date_ul").find("li.activeli").attr("id").split("_")[1];
+        var period_id = selectedid;//$("ul#pms_date_ul").find("li.activeli").attr("id").split("_")[1];
 
         // Create a formdata object and add the files
         var data = new FormData();
@@ -468,6 +413,7 @@ $(document).ready(function(){
             processData: false, // Don't process the files
             contentType: false, // Set content type to false as jQuery will tell the server its a query string request
             success: function (res){
+				console.log(res);
                 var res = JSON.parse(res);
                 if(res["success"]){
                     var selectedid = $("ul#pms_date_ul").find("li.activeli").attr("id");
@@ -567,7 +513,7 @@ $(document).ready(function(){
 				var data = new FormData();
 				data.append("pms_date", pms_date);
 				data.append("branch_id", branch_id);
-				data.append("sales", pms_sales);
+				data.append("sales", pms_sales.replace(",", ""));
 				if (typeof files !== 'undefined')
 					$.each(files, function (key, value)
 					{
@@ -611,8 +557,8 @@ $(document).ready(function(){
 
     /*delete period*/
     $("a#confirm_delete_btn").on("click", function(){
-      var id = $("div#confirm_modal").data("eid");
-      var data = {"id":id.split("_")[1]};
+      //var id = $("div#confirm_modal").data("eid");
+      var data = {"id":selectedid};
       $.ajax({
           url: baseurl + "/productmovement/deletePeriod",
           method:"POST",
@@ -620,7 +566,7 @@ $(document).ready(function(){
           success:function(data){ 
             var data = JSON.parse(data);
             if(data["success"]){
-              $("ul#pms_date_ul li#"+id).remove();
+              //$("ul#pms_date_ul li#"+id).remove();
               var tr = '<tr id="row1"><td colspan="7" align="center"><font style="color: #f30"><b>No data to display.</b></font></td></tr>'
               $("table#productmovementtable tbody").html(tr);
 
@@ -662,7 +608,28 @@ $(document).ready(function(){
               }  
           });
         });
-    /* complete period */
+
+    $("#save_pms_sales").on("click", function(){
+		var sales = $("#update_pms_sales_inp").val().replace(",", "");
+		var data = {"id":selectedid, sales};
+		$.ajax({
+			url: baseurl + "/productmovement/updatesales",
+			method:"POST",
+			data: data,
+			success:function(data){
+				var data = JSON.parse(data);
+				if(data["success"]){
+					$.bootstrapGrowl("&nbsp; &nbsp; <span class='fa fa-check' style='font-size: 20px'></span> &nbsp; Changes successfully saved.", {
+						type: "success",
+						allow_dismiss: false,
+						width: 300
+					});
+					$("#sales_div").find("h3").text("Sales: "+data["sales"]);
+					$("#update_sales_modal").modal("hide");
+				}
+			}
+		});
+	});
 
     // Restricts input for each element in the set of matched elements to the given inputFilter.
     // Numeric only control handler
@@ -680,6 +647,7 @@ $(document).ready(function(){
                     key == 8 ||
                     key == 13 ||
                     key == 190 ||
+				    key == 110 ||
                     (key >= 35 && key <= 40) ||
                     (key >= 48 && key <= 57) ||
                     (key >= 96 && key <= 105));

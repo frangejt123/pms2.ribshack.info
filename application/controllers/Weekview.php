@@ -116,7 +116,12 @@ class Weekview extends CI_Controller {
 			$datedataarray[$row["product_id"]]['desc'] = $row["description"];
 			$datedataarray[$row["product_id"]]['parent_id'] = $row["parent_id"];
 			$dateformat = date('Ymd', strtotime($row["date"]));
-			$datedataarray[$row["product_id"]]['date'][$dateformat] = $row["pos_total"];
+
+			if($row["allow_weekview"])
+				$datedataarray[$row["product_id"]]['date'][$dateformat] = $row["pos_total"];
+			else{
+				$datedataarray[$row["product_id"]]['date'][$dateformat] = 0;
+			}
 
 			if(!is_null($row["parent_id"]) || $row["parent_id"] != ""){
 				if(array_key_exists($row["parent_id"].$dateformat, $childsum)){
