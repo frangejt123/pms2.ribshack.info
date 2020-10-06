@@ -22,12 +22,16 @@ $(document).ready(function () {
 							+ '<th>Week Total</th>'
 							+ '<th>Week Avg</th>';
 
-		if(startDate !== endDate)
+		var filtereddate = [];
+		if(startDate !== endDate){
 			$.each(dates, function (ind, row) {
 				weeklyheader += '<th>' + moment(row).format('MMM. D') + '</th>';
+				filtereddate.push(moment(row).format('YYYYMMDD'));
 			});
-		else
+		}else{
 			weeklyheader += '<th>' + moment(picker.startDate).format('MMM. D') + '</th>';
+			filtereddate.push(moment(picker.startDate).format('YYYYMMDD'));
+		}
 
 		if ( $.fn.dataTable.isDataTable( '#weekly_pms_tbl') ) {
 			$('#weekly_pms_tbl').DataTable().destroy();
@@ -40,7 +44,7 @@ $(document).ready(function () {
 		getTabledata('drinks_tbl', 2, startDate, endDate);
 		$("table#weekly_pms_tbl thead tr").html(weeklyheader);
 
-		getPMS(startDate, endDate, weeklyheader);
+		getPMS(startDate, endDate, filtereddate);
 	});
 
 	$.ajax({
@@ -60,8 +64,76 @@ $(document).ready(function () {
 		}
 	});
 
-	function getPMS(startDate, endDate, weeklyheader) {
-			$('#weekly_pms_tbl').DataTable({
+	var weekly_pms_table;
+	var fdate;
+
+	// Add event listener for opening and closing details
+	$('#weekly_pms_tbl tbody').on('click', 'td.product_parent', function () {
+		var tr = $(this).closest('tr');
+		var row = weekly_pms_table.row( tr );
+
+		if(row.data().child !== undefined){
+			if ( row.child.isShown() ) {
+				// This row is already open - close it
+				row.child.hide();
+				tr.removeClass('shown parent-selected');
+			}
+			else {
+				// Open this row
+				row.child(format(row.data())).show();
+				//format(row.data());
+				tr.addClass('shown parent-selected');
+			}
+		}
+	});
+
+	function format ( d ) {
+		// `d` is the original data object for the row
+		var tr = "";
+		var thead = "<th></th><th>Week Total</th><th>Week Avg</th>";
+
+		$.each(fdate, function(ind, row){
+			thead += '<th>'+moment(row).format('MMM. D')+'</th>';
+		});
+
+		$.each(d['child'], function(i, r){
+			tr += '<tr class="weekly_view_child">';
+
+			var wt = 0;
+
+			$.each(fdate, function(ind, row){
+				wt += parseFloat(r[row]);
+			});
+
+			var wa = parseFloat((wt / fdate.length)).toFixed(2);
+			tr += '<td>' + r['desc'] + "</td><td>"+wt.toFixed(2)+"</td><td>"+wa+"</td>";
+
+			$.each(fdate, function(ind, row){
+				tr += '<td>' + r[row] + "</td>";
+			});
+
+			tr += '</tr>';
+		});
+
+		return '<table class="table"><thead><tr>'+thead+'</tr></thead>'+
+			tr
+			+ '</table>';
+	}
+
+	function getPMS(startDate, endDate, filtereddate) {
+			fdate = filtereddate;
+			var tbl_col = [
+				{'data': 'desc', 'className':'product_parent'},
+				{'data': 'week_total'},
+				{'data': 'week_avg'}
+			];
+
+			$.each(filtereddate, function(ind, row){
+				var d = {'data': row};
+				tbl_col.push(d);
+			});
+
+		weekly_pms_table = $('#weekly_pms_tbl').DataTable({
 				"processing": true,
 				"serverSide": true,
 				"bLengthChange": false,
@@ -81,7 +153,8 @@ $(document).ready(function () {
 							d.branch_id = branch_id;
 						}
 					}
-				}
+				},
+				"columns": tbl_col
 			});
 	}
 

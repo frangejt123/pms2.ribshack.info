@@ -240,10 +240,6 @@
 						<table class="table table-hover" id="weekly_pms_tbl">
 							<thead>
 								<tr>
-<!--									<th>First name</th>-->
-<!--									<th>Last name</th>-->
-<!--									<th>Position</th>-->
-<!--									<th>Office</th>-->
 								</tr>
 							</thead>
 							<tbody>

@@ -182,3 +182,11 @@ tr.data_sales_tr{
 #period_branch_form .select2-selection__arrow {
 	height: 33px !important;
 }
+
+.parent-selected{
+	background: #ccc;
+}
+
+.weekly_view_child{
+	color: #00A6C7;
+}

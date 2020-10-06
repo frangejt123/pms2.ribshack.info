@@ -156,7 +156,7 @@ $(document).ready(function(){
 						+ '<td style="padding-left: 15px;">'+crow["description"]+'</td>';
 
 						for(var i=1;i<=pos_count;i++){
-							li += '<td style="padding-left: 15px;">'+crow["pos"+1]+'</td>';
+							li += '<td style="padding-left: 15px;">'+crow["pos"+i]+'</td>';
 						}
 
 					li += '<td style="padding-left: 15px;">'+crow["pos_total"]+'</td>'
