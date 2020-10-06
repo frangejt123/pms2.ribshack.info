@@ -130,6 +130,10 @@ class Productmovement extends CI_Controller {
 
         //ACTUAL - POS SOLD = DISCREPANCY
         foreach($productList as $ind => $row) {
+        	//print_r($csv_data);
+			if (array_key_exists($row["id"], $csv_data)) {
+				$csv_data[$row["id"]]["qty"];
+			}
 			$product_param["product_id"] = $row["id"];
 			$product_param["period_id"] = isset($lastid["id"]) ? $lastid["id"] : null;
 			$lastactual = $this->modProductmovement->getActual($product_param)->row_array();
@@ -284,16 +288,17 @@ class Productmovement extends CI_Controller {
             while (!feof($file)) {
                 $csv = fgetcsv($file);
 
-                if(isset($csv[0]))
+                if(isset($csv[0])){
 					if ($csv[0] != "doctype") {
 						$row_data[$csv[1]]["product_code"] = $csv[1];
 						$row_data[$csv[1]]["description"] = $csv[3];
 						$row_data[$csv[1]]["uom_code"] = $csv[2];
 						$row_data[$csv[1]]["qty"] = $csv[6];
 					}
+                }
             }
-            array_pop($row_data);
 
+            //array_pop($row_data);
             fclose($file);
             $data = array(
                 "inventory" => $row_data,
