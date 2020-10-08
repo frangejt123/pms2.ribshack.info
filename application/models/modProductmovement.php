@@ -128,6 +128,23 @@ class ModProductmovement extends CI_Model {
         return $result;
     }
 
+	function deletebyperiod($param) {
+
+		$result = array();
+		$this->db->where($this->FIELDS['period_id'], $param["period_id"]);
+
+		if ($this->db->delete('product_movement')) {
+			$result["period_id"] = $param["period_id"];
+			$result["success"] = true;
+		} else {
+			$result["success"] = false;
+			$result["error_id"] = $this->db->_error_number();
+			$result["message"] = $this->db->_error_message();
+		}
+
+		return $result;
+	}
+
     function getActual($param){
 		$this->db->select("actual");
 		$this->db->from("product_movement");

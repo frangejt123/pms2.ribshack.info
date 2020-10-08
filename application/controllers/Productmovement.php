@@ -338,11 +338,11 @@ class Productmovement extends CI_Controller {
 
             $r["pos_sold"] = 0;
             $r["discrepancy"] = 0;
-            $r["id"] = $pmsrow["id"];
             if(array_key_exists($row["id"], $csv_data)){
 
 				if (!is_null($file0) || !is_null($file1) || !is_null($file2) || !is_null($file3) || !is_null($file4)){
 					if (array_key_exists($row["id"], $csv_data)) {
+						$r["id"] = $pmsrow["id"];
 						$r["pos1"] = isset($csv_data[$row["id"]]["pos1"]) ? $csv_data[$row["id"]]["pos1"] : 0;
 						$r["pos2"] = isset($csv_data[$row["id"]]["pos2"]) ? $csv_data[$row["id"]]["pos2"] : 0;
 						$r["pos3"] = isset($csv_data[$row["id"]]["pos3"]) ? $csv_data[$row["id"]]["pos3"] : 0;
@@ -369,13 +369,21 @@ class Productmovement extends CI_Controller {
 //         print_r($data);
 //         print("</pre>");
 //
-        foreach($data as $ind => $row){
-            $res = $this->modProductmovement->update($row);
-            if(!$res["success"]){
-                $error++;
-                $result["error_id"] = $res["id"];
-            }
-        }
+//		$del_param["period_id"] = $param["period_id"];
+//		$del = $this->modProductmovement->deletebyperiod($del_param);
+
+//		if($del["success"]){
+			foreach($data as $ind => $row){
+				//$row["period_id"] = $param["period_id"];
+				//$res = $this->modProductmovement->insert($row);
+				$res = $this->modProductmovement->update($row);
+				if(!$res["success"]){
+					$error++;
+					$result["error_id"] = $res["id"];
+				}
+			}
+//		}else
+//			$error = 1;
 
         if($error == 0) {
 			$result["success"] = true;

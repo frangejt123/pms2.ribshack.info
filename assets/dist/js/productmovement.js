@@ -332,8 +332,8 @@ $(document).ready(function(){
 	}
 
 	function prepareUpload(event) {
-        csvfiles.push(event.target.files);
-        files = csvfiles;
+		csvfiles.push(event.target.files);
+		files = csvfiles;
     }
 
     function prepareUploadUpdate(event) {
@@ -392,13 +392,21 @@ $(document).ready(function(){
         // Create a formdata object and add the files
         var data = new FormData();
         data.append("period_id", period_id);
-        if (typeof updatefiles !== 'undefined')
-            $.each(updatefiles, function (key, value)
-            {
-                $.each(value, function (k, v)
-                {
-                    data.append("csvfile" + key, v);
-                });
+
+		var filteredfile = {};
+		$.each(updatefiles, function(i, r){
+			if(filteredfile[r[0]['name']] == undefined){
+				filteredfile[r[0]['name']] = r;
+			}
+		});
+
+		var filecount = 0;
+        if (typeof filteredfile !== 'undefined')
+            $.each(filteredfile, function (key, value){
+				$.each(value, function (k, v){
+					data.append("csvfile" + filecount, v);
+					filecount += 1;
+				});
             });
 
         doUpdate(data);
@@ -514,12 +522,20 @@ $(document).ready(function(){
 				data.append("pms_date", pms_date);
 				data.append("branch_id", branch_id);
 				data.append("sales", pms_sales.replace(",", ""));
-				if (typeof files !== 'undefined')
-					$.each(files, function (key, value)
-					{
-						$.each(value, function (k, v)
-						{
-							data.append("csvfile" + key, v);
+
+				var filteredfile = {};
+				$.each(files, function(i, r){
+					if(filteredfile[r[0]['name']] == undefined){
+						filteredfile[r[0]['name']] = r;
+					}
+				});
+
+				var filecount = 0;
+				if (typeof filteredfile !== undefined)
+					$.each(filteredfile, function (key, value){
+						$.each(value, function (k, v){
+							data.append("csvfile" + filecount, v);
+							filecount += 1;
 						});
 					});
 
