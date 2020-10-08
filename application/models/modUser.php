@@ -9,7 +9,7 @@ class ModUser extends CI_Model {
     private $TABLE = "user",
             $FIELDS = array(
                 "id" => "user.id",
-                "email" => "user.email",
+                "username" => "user.username",
                 "password" => "user.password",
                 "firstname" => "user.firstname",
                 "lastname" => "user.lastname",

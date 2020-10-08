@@ -95,7 +95,7 @@
 				</li>
 				<li class="header"></li>
 				<li><a href="<?php echo base_url(); ?>index.php/product"><i class="fa fa-cubes"></i> <span>Product</span></a></li>
-				<li><a href="<?php echo base_url(); ?>index.php/branch"><i class="fa fa-sliders"></i> <span>Unit of branch</span></a></li>
+				<li><a href="<?php echo base_url(); ?>index.php/branch"><i class="fa fa-sliders"></i> <span>Unit of Measurement</span></a></li>
 				<li class="active"><a href="#"><i class="fa fa-home"></i> <span>Branch</span></a></li>
 				<?php
 				if($_SESSION["rgc_access_level"] == 0){

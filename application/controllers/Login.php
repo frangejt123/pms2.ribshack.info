@@ -15,7 +15,7 @@ class Login extends CI_Controller {
         if($rescount > 0){
         	session_start();
         	$_SESSION["rgc_id"] = $res["id"];
-        	$_SESSION["rgc_email"] = $res["email"];
+        	$_SESSION["rgc_username"] = $res["username"];
         	$_SESSION["rgc_firstname"] = $res["firstname"];
         	$_SESSION["rgc_lastname"] = $res["lastname"];
                 $_SESSION["rgc_poscount"] = $res["poscount"];

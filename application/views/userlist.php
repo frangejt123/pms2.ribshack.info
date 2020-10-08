@@ -129,7 +129,7 @@
                   <tr>
                     <th>Firstname</th>
                     <th>Lastname</th>
-                    <th>Email</th>
+                    <th>Username</th>
                     <th>Assigned Branch</th>
                     <th style="display:none">BRID</th>
                   </tr>

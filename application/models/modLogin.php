@@ -11,7 +11,7 @@ class ModLogin extends CI_Model {
                 "id" => "user.id",
                 "firstname" => "user.firstname",
                 "lastname" => "user.lastname",
-                "email" => "user.email",
+                "username" => "user.username",
                 "password" => "user.password",
                 "access_level" => "user.access_level",
                 "branch_id" => "user.branch_id",

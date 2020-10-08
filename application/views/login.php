@@ -1,5 +1,5 @@
 <?php
-  $_SESSION["rgc_email"] = "";
+  $_SESSION["rgc_username"] = "";
   session_destroy();
 ?>
 <!DOCTYPE html>
@@ -38,7 +38,7 @@
 
     <form action="#" method="post" id="loginform">
       <div class="form-group has-feedback">
-        <input type="email" id="email" class="form-control" placeholder="Username">
+        <input type="text" id="username" class="form-control" placeholder="Username">
         <span class="glyphicon glyphicon-user form-control-feedback"></span>
       </div>
       <div class="form-group has-feedback">
@@ -63,7 +63,7 @@
   </div>
   <!-- /.login-box-body -->
   <div class="login-error-container">
-    <p>Incorrect email address or password.</p>
+    <p>Incorrect username or password.</p>
   </div>
 </div>
 <!-- /.login-box -->

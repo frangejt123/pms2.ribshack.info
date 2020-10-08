@@ -27,7 +27,7 @@ class Main extends CI_Controller {
 			$this->load->view('login');
 		}
 		else{
-			if(isset($_SESSION["rgc_email"])){
+			if(isset($_SESSION["rgc_username"])){
 				$data["poscount"] = $_SESSION["rgc_poscount"];
 				$this->load->view('weekview', $data);
 			}else{

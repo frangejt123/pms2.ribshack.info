@@ -17,7 +17,7 @@ $(document).ready(function(){
 				tr += '<tr id="'+row["id"]+'" '+style+cls+'>'
 						+ '<td>'+row["firstname"]+'</td>'
 						+ '<td>'+row["lastname"]+'</td>'
-						+ '<td class="useremailtd">'+row["email"]+'</td>'
+						+ '<td class="usernametd">'+row["username"]+'</td>'
 						+ '<td>'+row["branch_name"]+'</td>'
 						+ '<td style="display:none">'+row["branch_id"]+'</td></tr>';
 			});
@@ -45,14 +45,14 @@ $(document).ready(function(){
 	$("#newUser_submitBtn").on("click", function(){
 		var firstname = $("input#userlist_firstname").val();
 		var lastname = $("input#userlist_lastname").val();
-		var email = $("input#userlist_email").val();
+		var username = $("input#userlist_username").val();
 		var branch = $("select#userlist_branch").val();
 		var access_level = $("select#userlist_access_lvl").val();
 
 		var data = {
 			"firstname": firstname,
 			"lastname": lastname,
-			"email": email,
+			"username": username,
 			"branch_id": branch,
 			"access_level": access_level
 		}
@@ -92,14 +92,14 @@ $(document).ready(function(){
 		}
 
 
-		if (!validateEmail(email)) {
-			$("input#userlist_email").addClass("emptyField");
-		    $.bootstrapGrowl("&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Incorrect email format.", {
-	          type: "danger",
-	          width: 300
-	        });s
-			return;
-		}
+		// if (!validateEmail(email)) {
+		// 	$("input#userlist_email").addClass("emptyField");
+		//     $.bootstrapGrowl("&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Incorrect email format.", {
+	    //       type: "danger",
+	    //       width: 300
+	    //     });s
+		// 	return;
+		// }
 
 
 		var emaillist = $("table#userlisttable tbody tr td.useremailtd");

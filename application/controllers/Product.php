@@ -6,7 +6,7 @@ class Product extends CI_Controller {
 	public function index()
 	{
 		
-		if(isset($_SESSION["rgc_email"])){
+		if(isset($_SESSION["rgc_username"])){
            $data["poscount"] = $_SESSION["rgc_poscount"];
 	      $this->load->view('product');
 	    }else{

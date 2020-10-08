@@ -2,11 +2,11 @@ $(document).ready(function(){
 	$("form#loginform").on("submit", function(e){
 		e.preventDefault();
 		$("div.login-error-container").hide();
-		var email = $("input#email").val();
+		var username = $("input#username").val();
 		var password = $("input#password").val();
 
 		var d = {
-			"email" : email,
+			"email" : username,
 			"password" : password
 		}
 

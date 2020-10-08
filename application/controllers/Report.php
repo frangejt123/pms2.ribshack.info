@@ -4,7 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Report extends CI_Controller {
         public function index(){
-            if(isset($_SESSION["rgc_email"])){
+            if(isset($_SESSION["rgc_username"])){
                 $data["poscount"] = $_SESSION["rgc_poscount"];
                 $this->config->load('reportname', TRUE);
                 $this->load->model('modBranch', "", TRUE);

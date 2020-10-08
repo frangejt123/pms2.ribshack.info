@@ -5,7 +5,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Userlist extends CI_Controller {
 	public function index()
 	{
-		if(isset($_SESSION["rgc_email"])){
+		if(isset($_SESSION["rgc_username"])){
 	      $this->load->view('userlist');
 	    }else{
 	      $this->load->view('login');
