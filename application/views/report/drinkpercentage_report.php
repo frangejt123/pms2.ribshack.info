@@ -67,9 +67,9 @@ $height = 42;
 $meals_possold = 0;
 foreach($meal as $ind => $row){
     $pdf->writeHTMLCell(80, 0, 5, $height, $row["description"], 0, 1, 0, 'top', '');
-    $pdf->writeHTMLCell(20, 0, 85, $height, $row["pos_sold"], 0, 1, 0, 'top', '');
+    $pdf->writeHTMLCell(20, 0, 85, $height, $row["pos_total"], 0, 1, 0, 'top', '');
 
-    $meals_possold += $row["pos_sold"];
+    $meals_possold += $row["pos_total"];
     $height += 6;
 }
 
@@ -77,9 +77,9 @@ $bheight = 42;
 $beverage_possold = 0;
 foreach($beverage as $ind => $row){
     $pdf->writeHTMLCell(80, 0, 110, $bheight, $row["description"], 0, 1, 0, 'top', '');
-    $pdf->writeHTMLCell(20, 0, 190, $bheight, $row["pos_sold"], 0, 1, 0, 'top', '');
+    $pdf->writeHTMLCell(20, 0, 190, $bheight, $row["pos_total"], 0, 1, 0, 'top', '');
 
-    $beverage_possold += $row["pos_sold"];
+    $beverage_possold += $row["pos_total"];
     $bheight += 6;
 }
 

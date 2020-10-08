@@ -24,7 +24,12 @@ class ModReport extends CI_Model {
                             branch.operated_by,
                             product_movement.id as id,
                             product_movement.product_id as product_id,
-                            Sum(product_movement.pos_sold) as pos_sold,
+                            Sum(product_movement.pos1) as pos1,
+                            Sum(product_movement.pos2) as pos2,
+                            Sum(product_movement.pos3) as pos3,
+                            Sum(product_movement.pos4) as pos4,
+                            Sum(product_movement.pos5) as pos5,
+                            Sum(product_movement.pos_total) as pos_total,
                             Sum(product_movement.beginning) as beginning,
                             Sum(product_movement.ending) as ending,
                             Sum(product_movement.delivery) as delivery,
@@ -42,11 +47,11 @@ class ModReport extends CI_Model {
                         Where
                             (period.date >= '".date("Y-m-d", strtotime($param["datefrom"]))."' And
                             period.date <= '".date("Y-m-d", strtotime($param["dateto"]))."') And
-                            branch.branch_id = '".$param["branch"]."' And
-                            period.status = '1'
+                            branch.branch_id = '".$param["branch"]."'
                         Group By product_movement.product_id
                         Order By
                             product.description ASC");
+        //period.status = '1'
 
         return $query;
     }
@@ -55,7 +60,7 @@ class ModReport extends CI_Model {
         $tablefield = "";
 
         $query = $this->db->query("Select
-                            SUM(product_movement.pos_sold) as pos_sold,
+                            SUM(product_movement.pos_total) as pos_total,
                             product_movement.period_id,
                             product.description,
                             product.product_type,
@@ -70,11 +75,11 @@ class ModReport extends CI_Model {
                             branch On period.branch_id = branch.branch_id
                          Where (product.product_type = '1' OR product.product_type = '2') AND branch.branch_id = '".$param["branch"]."'
                          And (period.date >= '".date("Y-m-d", strtotime($param["datefrom"]))."' And
-                            period.date <= '".date("Y-m-d", strtotime($param["dateto"]))."') And
-                            period.status = '1'
+                            period.date <= '".date("Y-m-d", strtotime($param["dateto"]))."')
                          Group by product.id
                          Order By product.description ASC");
 
+        //period.status = '1'
         return $query;
     }
 
@@ -82,7 +87,7 @@ class ModReport extends CI_Model {
         $tablefield = "";
 
         $query = $this->db->query("Select
-                            SUM(product_movement.pos_sold) as pos_sold,
+                            SUM(product_movement.pos_total) as pos_total,
                             product_movement.period_id,
                             product.description,
                             '1' as product_type,
@@ -97,11 +102,10 @@ class ModReport extends CI_Model {
                             branch On period.branch_id = branch.branch_id
                          Where (product.id = '51002SF' OR product.id = '51002SFSC') AND branch.branch_id = '".$param["branch"]."'
                          And (period.date >= '".date("Y-m-d", strtotime($param["datefrom"]))."' And
-                            period.date <= '".date("Y-m-d", strtotime($param["dateto"]))."') And
-                            period.status = '1'
+                            period.date <= '".date("Y-m-d", strtotime($param["dateto"]))."')
                          Group by product.parent_id
                          Order By product.description ASC");
-
+//period.status = '1'
         return $query;
     }
 }

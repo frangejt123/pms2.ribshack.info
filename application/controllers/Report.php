@@ -20,10 +20,7 @@ class Report extends CI_Controller {
             }else{
               $this->load->view('login');
             }
-
-            
         }
-
 
         public function productmovement(){
             $this->load->library('Pdf');
@@ -54,7 +51,12 @@ class Report extends CI_Controller {
             foreach($res as $ind => $row){
                 if(!is_null($row["parent_id"])){
                     $childrow["product_id"] = $row["product_id"];
-                    $childrow["pos_sold"] = $row["pos_sold"];
+					$childrow["pos1"] = $row["pos1"];
+					$childrow["pos2"] = $row["pos2"];
+					$childrow["pos3"] = $row["pos3"];
+					$childrow["pos4"] = $row["pos4"];
+					$childrow["pos5"] = $row["pos5"];
+					$childrow["pos_total"] = $row["pos_total"];
                     $childrow["description"] = $row["description"];
                     $childrow["uom"] = $row["uom_abbr"];
                     $childrow["pid"] = $row["parent_id"];
@@ -65,7 +67,12 @@ class Report extends CI_Controller {
                     $product[$row["product_id"]]["id"] = $row["id"];
                     $product[$row["product_id"]]["period_id"] = $row["period_id"];
                     $product[$row["product_id"]]["product_id"] = $row["product_id"];
-                    $product[$row["product_id"]]["pos_sold"] = $row["pos_sold"];
+                    $product[$row["product_id"]]["pos1"] = $row["pos1"];
+					$product[$row["product_id"]]["pos2"] = $row["pos2"];
+					$product[$row["product_id"]]["pos3"] = $row["pos3"];
+					$product[$row["product_id"]]["pos4"] = $row["pos4"];
+					$product[$row["product_id"]]["pos5"] = $row["pos5"];
+					$product[$row["product_id"]]["pos_total"] = $row["pos_total"];
                     $product[$row["product_id"]]["beginning"] = is_null($row["beginning"]) ? 0 : $row["beginning"];
                     $product[$row["product_id"]]["ending"] = is_null($row["ending"]) ? 0 : $row["ending"];
                     $product[$row["product_id"]]["delivery"] = $row["delivery"];
@@ -122,7 +129,7 @@ class Report extends CI_Controller {
             foreach($meals_beverage as $ind => $row){
                 if (strpos($row["product_id"], 'SC') !== false) {
                     $product_id = str_replace("SC", "", $row["product_id"]);
-                    $mainmeal[$product_id]["pos_sold"] += $row["pos_sold"];
+                    $mainmeal[$product_id]["pos_total"] += $row["pos_total"];
                 }
             }
 
@@ -136,11 +143,13 @@ class Report extends CI_Controller {
             $meal = array();
             $beverage = array();
             foreach($mainmeal as $ind => $row){
-                if($row["product_type"] == 1){//product is meal
-                    $meal[$row["product_id"]] = $row;
-                }else{//product is beverage
-                    $beverage[$row["product_id"]] = $row;
-                }
+            	if($row["pos_total"] > 0){
+					if($row["product_type"] == 1){//product is meal
+						$meal[$row["product_id"]] = $row;
+					}else{//product is beverage
+						$beverage[$row["product_id"]] = $row;
+					}
+				}
             }
 
 

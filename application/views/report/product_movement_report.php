@@ -116,7 +116,7 @@ foreach($report_data as $ind => $row){
     	$pdf->writeHTMLCell(10, 6, 68.5, $cellheight, $row["uom_abbr"], $complex_cell_border, 1, 0, 'T', 'C');
 
     	$pdf->SetFont('helvetica', '', 7);
-    	$pdf->writeHTMLCell(15, 6, 78.5, $cellheight, $row["pos_sold"], $complex_cell_border, 1, 0, 'T', 'C');
+    	$pdf->writeHTMLCell(15, 6, 78.5, $cellheight, $row["pos_total"], $complex_cell_border, 1, 0, 'T', 'C');
     	$pdf->writeHTMLCell(14.5, 6, 93.5, $cellheight, $row["beginning"], $complex_cell_border, 1, 0, 'T', 'C');
     	$pdf->writeHTMLCell(14, 6, 108, $cellheight, $row["delivery"], $complex_cell_border, 1, 0, 'T', 'C');
     	$pdf->writeHTMLCell(15, 6, 122, $cellheight, $row["trans_in"], $complex_cell_border, 1, 0, 'T', 'C');
@@ -154,7 +154,7 @@ foreach($report_data as $ind => $row){
     		$pdf->writeHTMLCell(17, 6, 6.5, $cellheight, $chrow["product_id"], $complex_cell_border, 1, 0, 'T', '');
     		$pdf->writeHTMLCell(45, 6, 23.5, $cellheight, $chrow["description"], $complex_cell_border, 1, 0, 'T', '');
     		$pdf->writeHTMLCell(10, 6, 68.5, $cellheight, $chrow["uom"], $complex_cell_border, 1, 0, 'T', 'C');
-    		$pdf->writeHTMLCell(15, 6, 78.5, $cellheight, $chrow["pos_sold"], $complex_cell_border, 1, 0, 'T', 'C');
+    		$pdf->writeHTMLCell(15, 6, 78.5, $cellheight, $chrow["pos_total"], $complex_cell_border, 1, 0, 'T', 'C');
     		$pdf->writeHTMLCell(114.5, 6, 93.5, $cellheight, "", $complex_cell_border, 1, 0, 'T', '');
 
     	}
