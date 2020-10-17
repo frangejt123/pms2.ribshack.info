@@ -49,10 +49,23 @@ $(document).ready(function(){
 		var branch = $("select#userlist_branch").val();
 		var access_level = $("select#userlist_access_lvl").val();
 
+
+		var password = $("input#userlist_password").val();
+		var cfm_password = $("input#userlist_cfm_password").val();
+
+		if(password != cfm_password){
+			$.bootstrapGrowl("&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Password did not match.", {
+				type: "danger",
+				width: 300
+			});
+			return;
+		}
+
 		var data = {
 			"firstname": firstname,
 			"lastname": lastname,
 			"username": username,
+			"password": password,
 			"branch_id": branch,
 			"access_level": access_level
 		}
@@ -102,21 +115,20 @@ $(document).ready(function(){
 		// }
 
 
-		var emaillist = $("table#userlisttable tbody tr td.useremailtd");
-		var emailexist = 0;
-		$.each(emaillist, function(ind, row){
-			if($(row).html() == email){
-		        emailexist++;
+		var usernamelist = $("table#userlisttable tbody tr td.usernametd");
+		var usernameexist = 0;
+		$.each(usernamelist, function(ind, row){
+			if($(row).html() == username){
+				usernameexist++;
 			}
 		});
 
-		if(emailexist > 0){
-			$("input#userlist_email").addClass("emptyField");
-		    $.bootstrapGrowl("&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Email already taken.", {
+		if(usernameexist > 0){
+			$("input#userlist_username").addClass("emptyField");
+		    $.bootstrapGrowl("&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Username already taken.", {
 	          type: "danger",
 	          width: 300
 	        });
-
 	        return;
 		}
 
@@ -134,7 +146,7 @@ $(document).ready(function(){
 					var tr = '<tr id="'+res["id"]+'" '+style+'>'
 								+ '<td>'+res["firstname"]+'</td>'
 								+ '<td>'+res["lastname"]+'</td>'
-								+ '<td class="useremailtd">'+email+'</td>'
+								+ '<td class="usernametd">'+username+'</td>'
 								+ '<td>'+selectedbranchtxt+'</td>'
 								+ '<td style="display:none">'+branch+'</td></tr>';
 
@@ -151,10 +163,10 @@ $(document).ready(function(){
 		});
 	});
 
-	function validateEmail(email) {
-	    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-	    return re.test(String(email).toLowerCase());
-	}
+	// function validateEmail(email) {
+	//     var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+	//     return re.test(String(email).toLowerCase());
+	// }
 
 	/* on row click */
 	$("table#userlisttable tbody").on("click", "tr", function(){
@@ -165,12 +177,12 @@ $(document).ready(function(){
 
 		var fname = $(tds[0]).html();
 		var lname = $(tds[1]).html();
-		var email = $(tds[2]).html();
+		var username = $(tds[2]).html();
 		var branch = $(tds[3]).html();
 
 		$("input#detail_userlist_firstname").val(fname);
 		$("input#detail_userlist_lastname").val(lname);
-		$("input#detail_userlist_email").val(email);
+		$("input#detail_userlist_username").val(username);
 		$("select#detail_userlist_access_lvl").val(accesslevel).trigger("change");
 		$("div#userlist_detail_modal").data("id", id);
 		$("div#userlist_detail_modal").data("selectedbranch", $(tds[4]).html());
@@ -208,7 +220,7 @@ $(document).ready(function(){
 		var id = $("div#userlist_detail_modal").data("id");
 		var firstname = $("input#detail_userlist_firstname").val();
 		var lastname = $("input#detail_userlist_lastname").val();
-		var email = $("input#detail_userlist_email").val();
+		var username = $("input#detail_userlist_username").val();
 		var branch = $("select#detail_user_branch").val();
 		var access_level = $("select#detail_userlist_access_lvl").val();
 
@@ -216,7 +228,7 @@ $(document).ready(function(){
 			"id": id,
 			"firstname": firstname,
 			"lastname": lastname,
-			"email": email,
+			"username": username,
 			"branch_id": branch,
 			"access_level": access_level
 		}
@@ -239,28 +251,28 @@ $(document).ready(function(){
 			return;
 		}
 
-		if (!validateEmail(email)) {
-			$("input#userlist_email").addClass("emptyField");
-		    $.bootstrapGrowl("&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Incorrect email format.", {
-	          type: "danger",
-	          width: 300
-	        });s
-			return;
-		}
+		// if (!validateEmail(email)) {
+		// 	$("input#userlist_email").addClass("emptyField");
+		//     $.bootstrapGrowl("&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Incorrect email format.", {
+	    //       type: "danger",
+	    //       width: 300
+	    //     });s
+		// 	return;
+		// }
 
-		var emaillist = $("table#userlisttable tbody tr td.useremailtd");
-		var emailexist = 0;
-		var currentemail = $("table#userlisttable tbody tr#"+id+" td.useremailtd");
-		$.each(emaillist, function(ind, row){
-			if($(row).html() != $(currentemail).html())
-				if($(row).html() == email){
-			        emailexist++;
+		var usernamelist = $("table#userlisttable tbody tr td.usernametd");
+		var usernameexist = 0;
+		var currentusername = $("table#userlisttable tbody tr#"+id+" td.usernametd");
+		$.each(usernamelist, function(ind, row){
+			if($(row).html() != $(currentusername).html())
+				if($(row).html() == username){
+					usernameexist++;
 				}
 		});
 
-		if(emailexist > 0){
-			$("input#detail_userlist_email").addClass("emptyField");
-		    $.bootstrapGrowl("&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Email already taken.", {
+		if(usernameexist > 0){
+			$("input#detail_userlist_username").addClass("emptyField");
+		    $.bootstrapGrowl("&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Username already taken.", {
 	          type: "danger",
 	          width: 300
 	        });
@@ -288,7 +300,7 @@ $(document).ready(function(){
 
 					var td = '<td>'+res["firstname"]+'</td>'
 								+ '<td>'+res["lastname"]+'</td>'
-								+ '<td class="useremailtd">'+email+'</td>'
+								+ '<td class="usernametd">'+username+'</td>'
 								+ '<td>'+selectedbranchtxt+'</td>'
 								+ '<td style="display:none">'+branch+'</td></tr>';
 

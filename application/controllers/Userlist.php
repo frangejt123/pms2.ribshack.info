@@ -26,7 +26,7 @@ class Userlist extends CI_Controller {
         $param = $this->input->post(NULL, "true");
         $param["firstname"] = ucfirst($param["firstname"]);
         $param["lastname"] = ucfirst($param["lastname"]);
-        $param["password"] = md5("1234");
+        $param["password"] = md5($param["password"]);
         $result = $this->modUser->insert($param);
 
         echo json_encode($result);

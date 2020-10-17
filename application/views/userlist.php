@@ -131,7 +131,7 @@
                     <th>Lastname</th>
                     <th>Username</th>
                     <th>Assigned Branch</th>
-                    <th style="display:none">BRID</th>
+                    <th style="display:none"></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -172,9 +172,19 @@
                 </div>
 
                 <div class="form-group">
-                  <label for="detail_userlist_email">Email</label>
-                  <input type="text" class="form-control" id="userlist_email">
+                  <label for="detail_userlist_username">Username</label>
+                  <input type="text" class="form-control" id="userlist_username">
                 </div>
+
+				<div class="form-group">
+					<label for="userlist_password">Password</label>
+					<input type="password" class="form-control" id="userlist_password">
+				</div>
+
+				<div class="form-group">
+					<label for="userlist_cfm_password">Confirm Password</label>
+					<input type="password" class="form-control" id="userlist_cfm_password">
+				</div>
 
                 <div class="form-group" id="userbranchform">
                   <label>Branch</label>
@@ -234,8 +244,8 @@
                 </div>
 
                 <div class="form-group">
-                  <label for="detail_userlist_email">Email</label>
-                  <input type="text" class="form-control" id="detail_userlist_email">
+                  <label for="detail_userlist_username">Username</label>
+                  <input type="text" class="form-control" id="detail_userlist_username">
                 </div>
 
                 <div class="form-group">
