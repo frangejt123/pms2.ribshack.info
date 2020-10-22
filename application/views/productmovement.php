@@ -136,13 +136,13 @@
 			</div>
 		</div>
 	  </span>
-		<?php
-			if($_SESSION["rgc_access_level"] == 0){
-				echo '<span class="pull-right">
-					<button type="button" class="btn btn-primary disabled" id="print_pms_btn">
-					  <i class="fa fa-print"></i>&nbsp; Print</button>&nbsp; &nbsp;
-				  </span>';
-			}else{
+<?php
+//			if($_SESSION["rgc_access_level"] == 0){
+//				echo '<span class="pull-right">
+//					<button type="button" class="btn btn-primary disabled" id="print_pms_btn">
+//					  <i class="fa fa-print"></i>&nbsp; Print</button>&nbsp; &nbsp;
+//				  </span>';
+//			}else{
 		?>
       <span class="pull-right">
         <button type="button" class="btn btn-info<?php echo $cls; ?>" id="new_pms_btn">
@@ -157,13 +157,17 @@
         <button type="button" class="btn btn-warning disabled" id="update_pms_btn">
           <i class="fa fa-file"></i>&nbsp; Upload</button>&nbsp; &nbsp;
       </span>
+	  <span class="pull-right">
+        <button type="button" class="btn btn-primary disabled" id="logs_pms_btn">
+          <i class="fa fa-bars"></i>&nbsp; Logs</button>&nbsp; &nbsp;
+      </span>
       <span class="btn-separator pull-right"></span>
       <span class="pull-right">
         <button type="button" class="btn btn-danger disabled" id="delete_pms_btn">
           <i class="fa fa-trash"></i>&nbsp; Delete</button>&nbsp; &nbsp;
       </span>
 		<?php
-			}
+//			}
 		?>
       <div class="clearfix"></div>
 

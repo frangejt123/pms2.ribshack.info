@@ -97,7 +97,6 @@ class ModPeriod extends CI_Model {
         return $result;
     }
 
-
     function delete($param) {
 
         $result = array();

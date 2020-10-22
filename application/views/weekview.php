@@ -79,6 +79,11 @@
     <!-- sidebar: style can be found in sidebar.less -->
     <section class="sidebar">
 		<ul class="sidebar-menu" data-widget="tree">
+			<li>
+				<a href="<?php echo base_url(); ?>index.php/dashboard">
+					<i class="fa fa-dashboard"></i> <span>Dashboard</span>
+				</a>
+			</li>
 			<li class="active">
 				<a href="#">
 					<i class="fa fa-calendar"></i> <span>Weekly Data</span>
@@ -257,13 +262,12 @@
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
-  <footer class="main-footer">
-    <div class="pull-right hidden-xs">
-      <b>Version</b> 2.4.0
-    </div>
-    <strong>Copyright &copy; 2014-2016 <a href="<?php echo base_url(); ?>assets/https://adminlte.io">Almsaeed Studio</a>.</strong> All rights
-    reserved.
-  </footer>
+	<footer class="main-footer">
+		<div class="pull-right hidden-xs">
+			<b>v1.0</b>
+		</div>
+		<strong><a href="http://www.delcom.com.ph/" target="_blank">Delcom Systems and  Solution Corporation</a>.</strong> All rights reserved 2019.
+	</footer>
 </div>
 <!-- ./wrapper -->
 
