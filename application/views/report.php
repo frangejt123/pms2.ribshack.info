@@ -79,6 +79,11 @@
 		<section class="sidebar">
 			<ul class="sidebar-menu" data-widget="tree">
 				<li>
+					<a href="<?php echo base_url(); ?>index.php/dashboard">
+						<i class="fa fa-dashboard"></i> <span>Dashboard</span>
+					</a>
+				</li>
+				<li>
 					<a href="<?php echo base_url(); ?>index.php/weekview">
 						<i class="fa fa-calendar"></i> <span>Weekly Data</span>
 					</a>
