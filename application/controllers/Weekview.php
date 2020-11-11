@@ -254,7 +254,6 @@ class Weekview extends CI_Controller {
 
 		$data = [];
 		foreach($datedataarray as $ind => $row){
-			print_r($row);
 			if(is_null($row["parent_id"]) || $row["parent_id"] == ""){
 				$data[$ind] = [];
 
