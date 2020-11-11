@@ -1,4 +1,6 @@
 $(document).ready(function(){
+	var productkit = {};
+
 	$("button#new_product_btn").on("click", function(){
 		$("div#new_product_modal").modal("show");
 		var inputs = $("form#newProductForm").find("input");
@@ -22,33 +24,17 @@ $(document).ready(function(){
 	$("div#new_product_modal").on('shown.bs.modal', function () {
 		var d = {
 			product_id: "0"
-		}
+		};
 	 	$.ajax({
 		method: "POST",
 		data: d,
-		url: baseurl+"/product/getParent",
+		url: baseurl+"/uom/getAll",
 		success: function(res){
 				var res = JSON.parse(res);
-
-                var dataProduct = [{"id":"","text":""}];
-                $.each(res["product"], function(i, r){
-                    dataProduct.push({"id":r["id"],"text":r["description"]});
-                });
-
                 var dataUom = [{"id":"","text":""}];
-                $.each(res["uom"], function(i, r){
+                $.each(res, function(i, r){
                     dataUom.push({"id":r["id"],"text":r["description"]});
                 });
-
-
-				// $("select#parent_id").html(options);
-				// $("select#product_uom").html(uom);
-
-                $('.select2#parent_id').select2({
-                   placeholder: "Select Parent",
-                   data: dataProduct
-                });
-
                 $('.select2#product_uom').select2({
                    placeholder: "Select Unit of Measurement",
                    data: dataUom
@@ -65,6 +51,113 @@ $(document).ready(function(){
 		}else{
 			$("input#product_price").val(parseFloat("0.00").toFixed(2));
 		}
+	});
+
+	$(".kit_composition_btn").on("click", function(){
+		$("#kit_composition_modal").modal("show");
+		var d = {
+			product_id: "0"
+		};
+		$("div#opt-btn").hide();
+
+		$.ajax({
+			method: "POST",
+			data: d,
+			url: baseurl+"/product/getParent",
+			success: function(res){
+				var res = JSON.parse(res);
+
+				var dataProduct = [{"id":"","text":""}];
+				$.each(res["product"], function(i, r){
+					dataProduct.push({"id":r["id"],"text":r["description"]});
+				});
+
+				$('.select2#compositionproduct').select2({
+					data: dataProduct,
+					allowClear: true,
+					placeholder: "Select Parent"
+				});
+
+			}
+		});
+	});
+
+	$("#add_composition").on("click", function(){
+		var compositionproduct = $("#compositionproduct").val();
+		var compositionqty = $("#compositionqty").val();
+		var compositiondesc = $("select#compositionproduct option:selected").html();
+
+		if(compositionproduct == "" || compositionqty == ""){
+			alert("Please fill in required fields.");
+			return;
+		}
+
+		var compositionlist = $("table#kit_composition_table").find("tr.compprod_tr");
+		var exist = 0;
+		$.each(compositionlist, function(ind, row){
+			if($(row).find("td.comprod_id").html() == compositionproduct){
+				$(row).find("td.comprod_qty").html(compositionqty);
+				$(row).addClass("text-info edited haschanges");
+				$(row).removeClass("active");
+
+				if($(row).hasClass("deleted")){
+					$(row).removeClass("deleted text-danger");
+					$(row).css({
+						'text-decoration':'none'
+					});
+				}
+
+				exist++;
+			}
+		});
+
+		if(exist > 0){
+			// alert("Product already selected");
+			// return;
+		}else{
+			var tr = "<tr class='compprod_tr text-success new haschanges'>"
+				+ "<td class='comprod_id'>"+compositionproduct+"</td>"
+				+ "<td>"+compositiondesc+"</td>"
+				+ "<td class='comprod_qty'>"+compositionqty+"</td>"
+				+ "</tr>";
+
+			$("#kit_composition_table").prepend(tr);
+		}
+
+		$("#compositionproduct").val("").trigger("change");
+		$("#compositionqty").val("");
+		$("div#opt-btn").hide();
+	});
+
+	$("#save_product_kit").on("click", function(){
+		var compositionlist = $("table#kit_composition_table").find("tr.compprod_tr.haschanges");
+		$.each(compositionlist, function(ind, row){
+			var id = $(row).attr("id");
+			var parent_id = $(row).find("td.comprod_id").html();
+			var quantity = $(row).find("td.comprod_qty").html();
+
+			var mode = "";
+			if($(row).hasClass("edited")){
+				mode = "edited";
+			}
+			if($(row).hasClass("new")){
+				id = "";
+				mode = "new";
+			}
+			if($(row).hasClass("deleted")){
+				mode = "deleted";
+			}
+
+			var rowdata = {parent_id, quantity, mode, id};
+			productkit[parent_id] = rowdata;
+			// productkit.push(rowdata);
+		});
+
+
+		$("#compositionproduct").val("").trigger("change");
+		$("#compositionqty").val("");
+
+		$("#kit_composition_modal").modal("hide");
 	});
 
 	$("input#product_id").on("blur", function(){
@@ -98,7 +191,7 @@ $(document).ready(function(){
 		var product_description = $("input#product_description").val();
 		var product_uom = $("select#product_uom").val();
 		var product_price = $("input#product_price").val();
-		var parent_id = $("select#parent_id").val();
+		// var parent_id = $("select#parent_id").val();
 		var parent_description = $("select#parent_id option:selected").html();
 		var uom_description = $("select#product_uom option:selected").html();
 
@@ -106,9 +199,10 @@ $(document).ready(function(){
 			"id": product_id,
 			"description": product_description,
 			"uom": product_uom,
-			"price": product_price,
-			"parent_id": parent_id
-		}
+			"product_kit": productkit,
+			"price": product_price
+			// "parent_id": parent_id,
+		};
 
 		if($("input#product_id").hasClass("idExist")){
 			$.bootstrapGrowl("&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Product Code already exist.", {
@@ -148,13 +242,12 @@ $(document).ready(function(){
 			success: function(res){
 				var res = JSON.parse(res);
 				if(res["success"]){
-					var tr = '<tr id="'+data["id"]+'"><td>'+data["id"]+'</td><td>'+data["description"]+'</td><td id="'+data["uom"]+'">'+uom_description+'</td><td>'+parseFloat(data["price"]).toFixed(2)+'</td><td>'
-								+"<a href='javascript:void(0)' style='color: #000' data-toggle='tooltip' data-placement='top' title='"+parent_description+"'>"
-		                      		+ data["parent_id"]+"</a></td></tr>";
+					var tr = '<tr id="'+data["id"]+'"><td>'+data["id"]+'</td><td>'+data["description"]+'</td><td id="'+data["uom"]+'">'+uom_description+'</td><td>'+parseFloat(data["price"]).toFixed(2)+'</td><td></a></td></tr>';
 
 		            $("table#producttable tbody").prepend(tr);
 					$('[data-toggle="tooltip"]').tooltip();	
 					$("div#new_product_modal").modal("hide");
+					productkit = {};
 
 					$.bootstrapGrowl("&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Changes successfully saved!", {
 			          type: "success",
@@ -163,7 +256,7 @@ $(document).ready(function(){
 			        });
 				}
 			}
-		})
+		});
 	});
 
 	$("#updateProduct_submitBtn").on("click", function(){
@@ -171,17 +264,20 @@ $(document).ready(function(){
 		var product_description = $("input#detail_product_description").val();
 		var product_uom = $("select#detail_product_uom").val();
 		var product_price = $("input#detail_product_price").val();
-		var parent_id = $("select#detail_parent_id").val();
 		var parent_description = $("select#detail_parent_id option:selected").html();
 		var uom_description = $("select#detail_product_uom option:selected").html();
+
+		$.each(productkit, function(ind, row){
+			productkit[ind]["product_id"] = product_id;
+		});
 
 		var d = {
 			"id": product_id,
 			"description": product_description,
 			"uom": product_uom,
 			"price": product_price,
-			"parent_id": parent_id
-		}
+			"product_kit": productkit
+		};
 
 		if($("input#product_id").hasClass("idExist")){
 			$.bootstrapGrowl("&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Product Code already exist.", {
@@ -222,12 +318,12 @@ $(document).ready(function(){
 				var res = JSON.parse(res);
 				if(res["success"]){
 					var td = '<td>'+d["id"]+'</td><td>'+d["description"]+'</td><td id="'+d["uom"]+'">'+uom_description+'</td><td>'+parseInt(d["price"]).toFixed(2)+'</td><td>'
-								+"<a href='javascript:void(0)' style='color: #000' data-toggle='tooltip' data-placement='top' title='"+parent_description+"'>"
-		                      		+ d["parent_id"]+"</a></td></tr>";
+								+"<a href='javascript:void(0)' style='color: #000' data-toggle='tooltip' data-placement='top' title='"+parent_description+"'></a></td></tr>";
 
 		            $("table#producttable tbody tr#"+d["id"]).html(td);
 					$('[data-toggle="tooltip"]').tooltip();
 					$("div#product_detail_modal").modal("hide");
+					productkit = {};
 
 					$.bootstrapGrowl("&nbsp; &nbsp; <span class='fa fa-check-circle' style='font-size: 20px'></span> &nbsp; Changes successfully updated!", {
 			          type: "success",
@@ -250,7 +346,7 @@ $(document).ready(function(){
 
 		var d = {
 			product_id: id
-		}
+		};
 
 		var inputs = $("form#detailProductForm").find("input");
 		$.each(inputs, function(ind, row){
@@ -259,33 +355,20 @@ $(document).ready(function(){
 		$("select#detail_product_uom").removeClass("emptyField");
 		$("div#product_detail_modal").data("id", id);
 
-	 	$.ajax({
-		method: "POST",
-		data: d,
-		url: baseurl+"/product/getParent",
-		success: function(res){
+		$.ajax({
+			method: "POST",
+			data: d,
+			url: baseurl+"/uom/getAll",
+			success: function(res){
 				var res = JSON.parse(res);
-				$("div#product_detail_modal").data("childcount", res["child"]);
-
-                var dataProduct = [{"id":"","text":"", "selected": false}];
-                $.each(res["product"], function(i, r){
-                    dataProduct.push({"id":r["id"],"text":r["description"]});
-                });
-
-                var dataUom = [{"id":"","text":"", "selected": false}];
-                $.each(res["uom"], function(i, r){
-                    dataUom.push({"id":r["id"],"text":r["description"]});
-                });
-
-                $('.select2#detail_product_uom').select2({
-                   placeholder: "Select Unit of Measurement",
-                   data: dataUom
-                }).val(uomval).trigger("change");
-
-                $('.select2#detail_parent_id').select2({
-                   placeholder: "Select Parent",
-                   data: dataProduct
-                }).val(parentval).trigger("change");
+				var dataUom = [{"id":"","text":""}];
+				$.each(res, function(i, r){
+					dataUom.push({"id":r["id"],"text":r["description"]});
+				});
+				$('.select2#detail_product_uom').select2({
+					placeholder: "Select Unit of Measurement",
+					data: dataUom
+				}).val(uomval).trigger("change");;
 
 				$("input#detail_product_id").val(id);
 				$("input#detail_product_description").val(description);
@@ -293,13 +376,73 @@ $(document).ready(function(){
 
 				$("div.progress_mask").hide();
 				$("div#product_detail_modal").modal("show");
-			},
-		beforeSend: function(){
-				$("div.progress_mask").show();
 			}
 		});
+
+		$.ajax({
+			method: "POST",
+			data: d,
+			url: baseurl+"/product/getkit",
+			success: function(res){
+				var res = JSON.parse(res);
+
+				var tr = "";
+				$.each(res, function(ind, row){
+					tr += "<tr id='"+row["id"]+"' class='compprod_tr'><td class='comprod_id'>"
+						+row["parent_id"]+"</td><td>"
+						+row["description"]+"</td><td class='comprod_qty'>"
+						+row["quantity"]+"</td></tr>";
+				});
+
+				$("table#kit_composition_table tbody").append(tr);
+			}
+		});
+
+		$("table#kit_composition_table tbody").html("");
 	});
 	/* on row click */
+
+	$("#delete_comp_selection").on("click", function(){
+		var tr = $("#kit_composition_table tbody tr.active");
+
+		if($(tr).hasClass("new")){
+			$(tr).remove();
+		}else{
+			$(tr).removeClass("edited haschanges text-info").addClass("text-danger deleted haschanges");
+			$(tr).css({
+				'text-decoration' : 'line-through'
+			});
+		}
+
+		$(tr).removeClass("active");
+
+		$("#compositionproduct").val("").trigger("change");
+		$("#compositionqty").val("");
+		$("div#opt-btn").hide();
+	});
+
+	$("table#kit_composition_table tbody").on("click", "tr", function(){
+		var tr = $("#kit_composition_table tbody tr");
+		$(tr).removeClass("active");
+
+
+		var id = $(this).attr("id");
+		var product_code = $(this).find('.comprod_id').html();
+		var quantity = $(this).find('.comprod_qty').html();
+
+		$("#compositionproduct").val(product_code).trigger("change");
+		$("#compositionqty").val(quantity);
+
+		$("div#opt-btn").show();
+		$(this).addClass("active");
+	});
+
+	$("#clear_comp_selection").on("click", function(){
+		$("#compositionproduct").val("").trigger("change");
+		$("#compositionqty").val("");
+		$("div#opt-btn").hide();
+		$("#kit_composition_table tbody tr").removeClass("active");
+	});
 
 	$("select#detail_parent_id").change(function(e) {
 		var childcount = $("div#product_detail_modal").data("childcount");
@@ -324,9 +467,7 @@ $(document).ready(function(){
 			var tr = "";
 
 			$.each(res, function(ind, row){
-				tr += '<tr id="'+row["id"]+'"><td>'+row["id"]+'</td><td>'+row["description"]+'</td><td id="'+row["uom"]+'">'+row["uom_description"]+'</td><td>'+parseFloat(row["price"]).toFixed(2)+'</td><td>'
-						+"<a href='javascript:void(0)' style='color: #000' data-toggle='tooltip' data-placement='top' title='"+row["parent_description"]+"'>"
-                      		+ row["parent_id"]+"</a></td></tr>";
+				tr += '<tr id="'+row["id"]+'"><td>'+row["id"]+'</td><td>'+row["description"]+'</td><td id="'+row["uom"]+'">'+row["uom_description"]+'</td><td>'+parseFloat(row["price"]).toFixed(2)+'</td><td></tr>';
 			});
 
 			$("table#producttable tbody").html(tr);

@@ -136,7 +136,6 @@
                     <th>Description</th>
                     <th style="width: 300px">Unit of Measurement</th>
                     <th>Price</th>
-                    <th>Parent</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -158,9 +157,9 @@
         <div class="modal-header">
            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">×</span></button>
-          <h4 class="modal-title"><span 
+          <h4 class="modal-title"><span
             style="border-radius: 2px; padding: 6px;
-            border: 1px solid #008d4c; background-color: #00a65a; color: #FFF"; 
+            border: 1px solid #008d4c; background-color: #00a65a; color: #FFF";
             class="fa fa-cubes"></span> &nbsp; <b>New Product</b></h4>
         </div>
         <div class="modal-body">
@@ -188,9 +187,12 @@
                 </div>
 
                 <div class="form-group">
-                  <label>Parent</label>
-                  <select class="select2 js-states form-control" id="parent_id">
-                  </select>
+<!--                  <label>Parent</label>-->
+<!--                  <select class="select2 js-states form-control" id="parent_id">-->
+<!--                  </select>-->
+					<button type="button" class="btn btn-success kit_composition_btn" style="width:100%">
+						<i class="fa fa-cogs"></i>&nbsp; Kit Composition
+					</button>
                 </div>
 
                 <div class="row">
@@ -224,9 +226,9 @@
         <div class="modal-header">
            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">×</span></button>
-          <h4 class="modal-title"><span 
+          <h4 class="modal-title"><span
             style="border-radius: 2px; padding: 6px;
-            border: 1px solid #008d4c; background-color: #00a65a; color: #FFF"; 
+            border: 1px solid #008d4c; background-color: #00a65a; color: #FFF";
             class="fa fa-cubes"></span> &nbsp; <b>Product Detail</b></h4>
         </div>
         <div class="modal-body">
@@ -253,11 +255,14 @@
                   <input type="text" class="form-control" id="detail_product_price">
                 </div>
 
-                <div class="form-group">
-                  <label for="detail_parent_id">Parent</label>
-                  <select class="select2 js-states form-control" id="detail_parent_id" style="width: 100%">
-                  </select>
-                </div>
+				<div class="form-group">
+					<!--                  <label>Parent</label>-->
+					<!--                  <select class="select2 js-states form-control" id="parent_id">-->
+					<!--                  </select>-->
+					<button type="button" class="btn btn-success kit_composition_btn" style="width:100%">
+						<i class="fa fa-cogs"></i>&nbsp; Kit Composition
+					</button>
+				</div>
 
              </div>
           </form>
@@ -265,8 +270,8 @@
         <div class="modal-footer">
               <div id="footer">
                   <div class="btn-group btn-group-justified" id="form-mode-buttons" role="group" >
-                      <button type="button" id="delete_product" class="btn btn-danger" data-key-method="cancel" style="width:49%">
-                          <i class="fa fa-trash-o"></i>&nbsp; Delete
+                      <button type="button" class="btn btn-default" style="width:49%" data-dismiss="modal">
+                          <i class="fa fa-remove"></i>&nbsp; Cancel
                       </button>
                       <button type="button" id="updateProduct_submitBtn" class="btn btn-primary" data-key-method="ok" style="width:49%">
                            <i class="fa fa-save"></i>&nbsp; Save
@@ -276,6 +281,85 @@
         </div>
       </div>
     </div>
+</div>
+<!-- modal -->
+
+
+<!-- modal [kit composition] -->
+<div class="modal fade" id="kit_composition_modal" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">×</span></button>
+				<h4 class="modal-title"><span style="border-radius: 2px; padding: 6px; border: 1px solid #008d4c; background-color: #00a65a; color: #FFF";
+							class="fa fa-cogs"></span> &nbsp; <b>Kit Composition</b></h4>
+			</div>
+			<div class="modal-body">
+				<form role="form" id="KitCompositionForm">
+					<div class="box-body">
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="form-group">
+								  <label for="detail_parent_id">Parent</label>
+								  <select class="select2 js-states form-control" id="compositionproduct" style="width: 100%">
+								  </select>
+								</div>
+							</div>
+							<div class="col-sm-6">
+								<div class="form-group">
+									<label for="compositionqty">Quantity</label>
+									<input type="text" class="form-control" id="compositionqty">
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-12">
+								<button type="button" id="add_composition" class="btn btn-primary" data-key-method="ok" style="width:100%">
+									<i class="fa fa-plus"></i>&nbsp; Add
+								</button>
+							</div>
+						</div>
+						<div class="row">
+							<table class="table table-hover" id="kit_composition_table">
+								<thead>
+								<tr>
+									<th>Code</th>
+									<th>Description</th>
+									<th>Quantity</th>
+								</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</form>
+			</div><!-- body -->
+			<div class="modal-footer">
+				<div class="row">
+					<div class="col-xs-5">
+						<div id="opt-btn">
+							<a href="#" class="btn btn-danger pull-left" id="delete_comp_selection">
+								<i class="fa fa-trash"></i> Delete
+							</a>
+							<a href="#" class="btn btn-default pull-left" id="clear_comp_selection">
+								<i class="fa fa-undo"></i> Clear
+							</a>
+						</div>
+					</div>
+					<div class="col-xs-7">
+						<a href="#" class="btn btn-default" data-dismiss="modal">
+							<i class="fa fa-remove"></i> Cancel
+						</a>
+						<a href="#" class="btn btn-success" id="save_product_kit">
+							<i class="fa fa-save"></i> Save
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 <!-- modal -->
 
@@ -290,7 +374,7 @@
           </h5>
         </div>
         <div class="modal-body">
-          <p>Are you sure you want to delete this record? 
+          <p>Are you sure you want to delete this record?
           This action cannot be undone and you will be unable to recover any data.</p>
         </div>
         <div class="modal-footer">
@@ -305,7 +389,7 @@
         </div>
       </div>
     </div>
-  </div>     
+  </div>
   <!-- confirm modal -->
 
   <footer class="main-footer">
@@ -352,9 +436,9 @@
 <!-- AdminLTE App -->
 <script src="<?php echo base_url(); ?>assets/dist/js/adminlte.min.js"></script>
 <!-- AdminLTE for demo purposes -->
+<script src="<?php echo base_url(); ?>assets/dist/js/select.min.js"></script>
 <script src="<?php echo base_url(); ?>assets/dist/js/demo.js"></script>
 <script src="<?php echo base_url(); ?>assets/dist/js/app.js"></script>
 <script src="<?php echo base_url(); ?>assets/dist/js/product.js"></script>
-<script src="<?php echo base_url(); ?>assets/dist/js/select.min.js"></script>
 </body>
 </html>

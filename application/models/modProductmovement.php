@@ -34,9 +34,9 @@ class ModProductmovement extends CI_Model {
 
     function getAll($param) {
         $this->FIELDS["description"] = "product.description";
-        $this->FIELDS["parent_id"] = "product.parent_id";
         $this->FIELDS["uom_abbr"] = "uom.abbreviation";
         $this->FIELDS["period_date"] = "period.date";
+
         $tablefield = "";
 
         foreach ($this->FIELDS as $alias => $field) {
@@ -157,7 +157,8 @@ class ModProductmovement extends CI_Model {
 	}
 
 	function getTotal($param){
-		$this->db->select("product_id, price, SUM(pos_total) as pos_total, period.date, product.description, parent_id, product.allow_weekview, product.composition_qty as cq");
+		$this->db->select("product_id, price, SUM(pos_total) as pos_total, 
+		period.date, product.description, product.allow_weekview");
 		$this->db->from("product_movement");
 		$this->db->join('period', 'period.id = product_movement.period_id');
 		$this->db->join('product', 'product.id = product_movement.product_id');
@@ -172,9 +173,18 @@ class ModProductmovement extends CI_Model {
 //		$this->db->where('product.allow_weekview =', '1');
 		$this->db->where('period.date >=', $param["datefrom"]);
 		$this->db->where('period.date <=', $param["dateto"]);
+//		$this->db->where('product_movement.product_id LIKE', '%60014%');
 		$this->db->order_by('product.description', 'ASC');
 		$query = $this->db->get();
 
+		return $query;
+	}
+
+	function getParent($product_id){
+    	$this->db->select("`kit_composition`.`parent_id`");
+		$this->db->from("kit_composition");
+		$this->db->where('`kit_composition`.`product_id` =', $product_id);
+		$query = $this->db->get();
 		return $query;
 	}
 

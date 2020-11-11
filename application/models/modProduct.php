@@ -9,7 +9,6 @@ class ModProduct extends CI_Model {
     private $TABLE = "product",
             $FIELDS = array(
                 "id" => "product.id",
-                "parent_id" => "product.parent_id",
                 "description" => "product.description",
                 "uom" => "product.uom",
                 "price" => "product.price",
@@ -46,30 +45,32 @@ class ModProduct extends CI_Model {
         return $query;
     }
 
-    function getParent($param) {
-
-        $tablefield = "";
-
-        foreach ($this->FIELDS as $alias => $field) {
-            if ($tablefield != "") {
-                $tablefield .= ",";
-            }
-            //Construct table field selection
-            $tablefield .= $field . " AS `" . $alias . "`";
-        }
-
-        $this->db->select($tablefield);
-        $this->db->from("product");
-        $this->db->where('product.parent_id IS NULL', null, false);
-        if(isset($param["product_id"])){
-            $this->db->where('product.id !=', $param["product_id"]);
-        }
-        $this->db->order_by('product.description', 'ASC');
-
-        $query = $this->db->get();
-
-        return $query;
-    }
+//    function getParent($param) {
+//
+//        $tablefield = "";
+//
+//        foreach ($this->FIELDS as $alias => $field) {
+//            if ($tablefield != "") {
+//                $tablefield .= ",";
+//            }
+//            //Construct table field selection
+//            $tablefield .= $field . " AS `" . $alias . "`";
+//        }
+//
+//        $this->db->select($tablefield);
+//        $this->db->from("product");
+////		$this->db->join('kit_composition', 'kit_composition.product_code = product.id');
+////        $this->db->where('product.parent_id IS NULL', null, false);
+////        $this->db->where('product.parent_id IS NULL', null, false);
+//        if(isset($param["product_id"])){
+//            $this->db->where('product.id !=', $param["product_id"]);
+//        }
+//        $this->db->order_by('product.description', 'ASC');
+//
+//        $query = $this->db->get();
+//
+//        return $query;
+//    }
 
     function getChild($param) {
 
@@ -123,8 +124,8 @@ class ModProduct extends CI_Model {
         $data = array();
 //        $param["id"] = $param["_server_id"];
         $id = $param["id"];
-        if($param["parent_id"] == "")
-        	$param["parent_id"] = null;
+//        if($param["parent_id"] == "")
+//        	$param["parent_id"] = null;
         foreach ($this->FIELDS as $alias => $field) {
             if (array_key_exists($alias, $param))
                 $data[$field] = $param[$alias];

@@ -149,8 +149,8 @@ $(document).ready(function(){
 					li += '<th style="width: 100px"></th>'
 					+ '</thead>'
 					+ '<tbody>';
-				$.each(row["child"], function(cind, crow){
 
+				$.each(row["child"], function(cind, crow){
 					li += '<tr class="subrow'+cind+'" data-href="#">'
 						+ '<td style="padding-left: 15px;">'+crow["product_id"]+'</td>'
 						+ '<td style="padding-left: 15px;">'+crow["description"]+'</td>';

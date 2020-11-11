@@ -141,8 +141,10 @@ class Dashboard extends CI_Controller {
 
 		foreach($datedataarray as $ind => $row){
 			$totqty = $row;
-			foreach($children[$ind] as $i => $r){
-				$totqty -= $r;
+			if(array_key_exists($ind, $children)){
+				foreach($children[$ind] as $i => $r){
+					$totqty -= $r;
+				}
 			}
 
 			if(in_array($ind, $not_allowedview)) {
@@ -153,8 +155,10 @@ class Dashboard extends CI_Controller {
 		}
 
 		foreach($datedataarray as $ind => $row){
-			foreach($children[$ind] as $i => $r){
-				$datedataarray[$ind] += ($realqty[$i] * $productprice[$i]);
+			if(array_key_exists($ind, $children)){
+				foreach($children[$ind] as $i => $r){
+					$datedataarray[$ind] += ($realqty[$i] * $productprice[$i]);
+				}
 			}
 		}
 
@@ -250,10 +254,9 @@ class Dashboard extends CI_Controller {
 			$dateformat = date('Ymd', strtotime($row["date"]));
 
 			if(is_null($row["parent_id"]) || $row["parent_id"] == "") {
-				$total = $total - $childsum[$row["product_id"].$dateformat];
-
-				if(!$row["allow_weekview"]){
-					$total = 0;
+				$childsumindex = $row["product_id"].$dateformat;
+				if(array_key_exists($childsumindex, $childsum)){
+					$total = $total - $childsum[$row["product_id"].$dateformat];
 				}
 			}
 

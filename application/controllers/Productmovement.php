@@ -30,10 +30,26 @@ class Productmovement extends CI_Controller {
         $this->load->model('modProductmovement', "", TRUE);
         $this->load->model('modProduct', "", TRUE);
 		$this->load->model('modPeriod', "", TRUE);
+		$this->load->model('modKit', "", TRUE);
+
         $param = $this->input->post(NULL, "true");
 		$periodparam["date"] = date('Y-m-d', strtotime($param["periodate"]));
 		$periodparam["branch_id"] = $param["branch_id"];
 		$periodres = $this->modPeriod->getAll($periodparam)->row_array();
+
+		$raw_kit_composition = $this->modKit->getAll(null)->result_array();
+		$kit_composition = array();
+
+		foreach($raw_kit_composition as $ind => $row){
+			$pdata = array(
+				"parent_id" => $row["parent_id"]
+			);
+			if(array_key_exists($row["product_id"], $kit_composition)){
+				array_push($kit_composition[$row["product_id"]], $pdata);
+			}else{
+				$kit_composition[$row["product_id"]] = array($pdata);
+			}
+		}
 
 		if(!isset($periodres["id"])){
 			echo "nodata";
@@ -43,9 +59,10 @@ class Productmovement extends CI_Controller {
 		$pmsparam["period_id"] = $periodres["id"];
 
         $res = $this->modProductmovement->getAll($pmsparam)->result_array();
-        $parent_product = $this->modProduct->getParent(null)->result_array();
-
         $product = array();
+
+        $parent_product = $this->modKit->getParent(null)->result_array();
+
         foreach($parent_product as $ind => $row){
             $product[$row["id"]] = array();
             $product[$row["id"]]["child"] = array();
@@ -53,20 +70,24 @@ class Productmovement extends CI_Controller {
 
         $data = array();
         foreach($res as $ind => $row){
-            if(!is_null($row["parent_id"])){
-                $childrow["product_id"] = $row["product_id"];
-                $childrow["pos1"] = $row["pos1"];
-				$childrow["pos2"] = $row["pos2"];
-				$childrow["pos3"] = $row["pos3"];
-				$childrow["pos4"] = $row["pos4"];
-				$childrow["pos5"] = $row["pos5"];
-				$childrow["pos_total"] = $row["pos_total"];
-                $childrow["description"] = $row["description"];
-                $childrow["uom"] = $row["uom_abbr"];
-                $childrow["pid"] = $row["parent_id"];
+			$parent_id = null;
+			if(array_key_exists($row["product_id"], $kit_composition)) {
+				foreach($kit_composition[$row["product_id"]] as $i => $r){
+					$parent_id = $r["parent_id"];
+					$childrow["product_id"] = $row["product_id"];
+					$childrow["pos1"] = $row["pos1"];
+					$childrow["pos2"] = $row["pos2"];
+					$childrow["pos3"] = $row["pos3"];
+					$childrow["pos4"] = $row["pos4"];
+					$childrow["pos5"] = $row["pos5"];
+					$childrow["pos_total"] = $row["pos_total"];
+					$childrow["description"] = $row["description"];
+					$childrow["uom"] = $row["uom_abbr"];
+					$childrow["pid"] = $parent_id;
 
-                array_push($product[$row["parent_id"]]["child"], $childrow);
-            }else{
+					array_push($product[$parent_id]["child"], $childrow);
+				}
+			}else{
                 // $product[$row["product_id"]] = $row;
                 $product[$row["product_id"]]["id"] = $row["id"];
                 $product[$row["product_id"]]["period_id"] = $row["period_id"];
@@ -86,11 +107,10 @@ class Productmovement extends CI_Controller {
                 $product[$row["product_id"]]["return_stock"] = $row["return_stock"];
                 $product[$row["product_id"]]["discrepancy"] = is_null($row["discrepancy"]) ? 0 : $row["discrepancy"];
                 $product[$row["product_id"]]["description"] = $row["description"];
-                $product[$row["product_id"]]["parent_id"] = $row["parent_id"];
+                $product[$row["product_id"]]["parent_id"] = $parent_id;
                 $product[$row["product_id"]]["uom_abbr"] = $row["uom_abbr"];
             }
         }
-
 
         $response = array();
 		$response["id"] = $periodres["id"];

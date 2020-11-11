@@ -20,29 +20,18 @@ class Product extends CI_Controller {
 
         $res = $this->modProduct->getAll($param)->result_array();
 
-		foreach($res as $ind => $row){
-			$res[$ind]["parent_description"] = "";
-			if(!is_null($row["parent_id"])){
-				$parent_id["id"] = $row["parent_id"];
-				$desc = $this->modProduct->getAll($parent_id)->row_array();
-				$res[$ind]["parent_description"] = $desc["description"];
-			}else{
-				$res[$ind]["parent_id"] = "";
-			}
-		}
-
         echo json_encode($res);
 	}
 
 	public function getParent(){
-		$this->load->model('modProduct', "", TRUE);
-		$this->load->model('modUom', "", TRUE);
+		$this->load->model('modKit', "", TRUE);
         $param = $this->input->post(NULL, "true");
 
-        $res["product"] = $this->modProduct->getParent($param)->result_array();
-        $res["uom"] = $this->modUom->getAll($param)->result_array();
-        if(isset($param["product_id"]))
-        	$res["child"] = $this->modProduct->getChild($param)->num_rows();
+        $res["product"] = $this->modKit->getParent($param)->result_array();
+        //$res["uom"] = $this->modUom->getAll($param)->result_array();
+        //if(isset($param["product_id"]))
+        	//$res["child"] = $this->modProduct->getChild($param)->num_rows();
+
         echo json_encode($res);
 	}
 
@@ -56,7 +45,16 @@ class Product extends CI_Controller {
 
 	public function saveProduct(){
 		$this->load->model('modProduct', "", TRUE);
+		$this->load->model('modKit', "", TRUE);
         $param = $this->input->post(NULL, "true");
+
+        if(isset($param["product_kit"]))
+			if(count($param["product_kit"]) > 0){
+				foreach($param["product_kit"] as $ind => $row){
+					$this->modKit->insert($row);
+				}
+			}
+
         $result = $this->modProduct->insert($param);
 
         echo json_encode($result);
@@ -64,10 +62,37 @@ class Product extends CI_Controller {
 
 	public function updateProduct(){
 		$this->load->model('modProduct', "", TRUE);
+		$this->load->model('modKit', "", TRUE);
         $param = $this->input->post(NULL, "true");
+
+		if(isset($param["product_kit"]))
+			if(count($param["product_kit"]) > 0){
+				foreach($param["product_kit"] as $ind => $row){
+					if($row["mode"] == "new"){
+						unset($row["id"]);
+						$this->modKit->insert($row);
+					}
+					if($row["mode"] == "edited"){
+						$this->modKit->update($row);
+					}
+					if($row["mode"] == "deleted"){
+						$this->modKit->delete($row);
+					}
+				}
+			}
+
         $result = $this->modProduct->update($param);
 
         echo json_encode($result);
+	}
+
+	public function getKit(){
+		$this->load->model('modProduct', "", TRUE);
+		$this->load->model('modKit', "", TRUE);
+		$param = $this->input->post(NULL, "true");
+
+		$result = $this->modKit->getAll($param)->result_array();
+		echo json_encode($result);
 	}
 
 	public function delete(){

@@ -190,3 +190,7 @@ tr.data_sales_tr{
 .weekly_view_child{
 	color: #00A6C7;
 }
+
+#opt-btn{
+	display: none;
+}
