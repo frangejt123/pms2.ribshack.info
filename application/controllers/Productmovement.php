@@ -84,8 +84,9 @@ class Productmovement extends CI_Controller {
 					$childrow["description"] = $row["description"];
 					$childrow["uom"] = $row["uom_abbr"];
 					$childrow["pid"] = $parent_id;
-
-					array_push($product[$parent_id]["child"], $childrow);
+					
+					if(array_key_exists($parent_id, $product))
+						array_push($product[$parent_id]["child"], $childrow);
 				}
 			}else{
                 // $product[$row["product_id"]] = $row;
