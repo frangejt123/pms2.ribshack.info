@@ -6,9 +6,9 @@ $(document).ready(function(){
 		var password = $("input#password").val();
 
 		var d = {
-			"email" : username,
+			"username" : username,
 			"password" : password
-		}
+		};
 
 		$.ajax({
 			method: "POST",
@@ -22,6 +22,6 @@ $(document).ready(function(){
 					$("div.login-error-container").fadeIn("slow");
 				}
 			}
-		})
+		});
 	});
 });

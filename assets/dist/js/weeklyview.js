@@ -7,12 +7,15 @@ $(document).ready(function () {
 		},
 		"showWeekNumbers": true,
 	}).on('apply.daterangepicker', function(ev, picker) {
-		var branch_id = $("select#period_branch").select2('val');
-		if(branch_id == ""){
+		if(access_level == 0){
+			var branch_id = $("select#period_branch").select2('val');
+		}
+		branch_id = userbranch;
+
+		if(branch_id == "" || branch_id == undefined){
 			alert("Please select branch");
 			return;
 		}
-
 
 		var startDate = picker.startDate.format('YYYY-MM-DD');
 		var endDate = picker.endDate.format('YYYY-MM-DD');
@@ -39,12 +42,12 @@ $(document).ready(function () {
 			$("table#weekly_pms_tbl thead tr").empty();
 		}
 
-		getTabledata('raw_material_tbl', 0, startDate, endDate);
-		getTabledata('premix_sauce_tbl', 1, startDate, endDate);
-		getTabledata('drinks_tbl', 2, startDate, endDate);
+		getTabledata('raw_material_tbl', 0, startDate, endDate, branch_id);
+		getTabledata('premix_sauce_tbl', 1, startDate, endDate, branch_id);
+		getTabledata('drinks_tbl', 2, startDate, endDate, branch_id);
 		$("table#weekly_pms_tbl thead tr").html(weeklyheader);
 
-		getPMS(startDate, endDate, filtereddate);
+		getPMS(startDate, endDate, filtereddate, branch_id);
 	});
 
 	$.ajax({
@@ -120,7 +123,7 @@ $(document).ready(function () {
 			+ '</table>';
 	}
 
-	function getPMS(startDate, endDate, filtereddate) {
+	function getPMS(startDate, endDate, filtereddate, branch_id) {
 			fdate = filtereddate;
 			var tbl_col = [
 				{'data': 'desc', 'className':'product_parent'},
@@ -148,17 +151,14 @@ $(document).ready(function () {
 					'data': function (d) {
 						d.startDate = startDate;
 						d.endDate = endDate;
-						if(access_level == 0){
-							var branch_id = $("select#period_branch").select2('val');
-							d.branch_id = branch_id;
-						}
+						d.branch_id = branch_id;
 					}
 				},
 				"columns": tbl_col
 			});
 	}
 
-	function getTabledata(tableid, type, startDate, endDate) {
+	function getTabledata(tableid, type, startDate, endDate, branch_id) {
 		if ( $.fn.dataTable.isDataTable( '#' + tableid) ) {
 			$('#' + tableid).DataTable().destroy();
 		}
@@ -181,10 +181,7 @@ $(document).ready(function () {
 						d.type = type;
 						d.startDate = startDate;
 						d.endDate = endDate;
-						if(access_level == 0){
-							var branch_id = $("select#period_branch").select2('val');
-							d.branch_id = branch_id;
-						}
+						d.branch_id = branch_id;
 					}
 				},
 				"columns": [

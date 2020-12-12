@@ -56,7 +56,7 @@
           <!-- User Account: style can be found in dropdown.less -->
           <li class="dropdown user user-menu">
             <a href="<?php echo base_url(); ?>assets/#" class="dropdown-toggle" data-toggle="dropdown">
-              <span class="hidden-xs">USER</span>
+              <span class="hidden-xs"><?php echo strtoupper($_SESSION["rgc_firstname"]." ".$_SESSION["rgc_lastname"]); ?></span>
             </a>
             <ul class="dropdown-menu">
               <!-- Menu Footer-->
@@ -262,6 +262,57 @@
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
+
+	<!-- modal [change pwd] -->
+	<div class="modal fade" id="changepass_modal" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">×</span></button>
+					<h4 class="modal-title"><span
+								style="border-radius: 2px; padding: 6px;
+            border: 1px solid #008d4c; background-color: #00a65a; color: #FFF";
+								class="fa fa-key"></span> &nbsp; <b>Change Password</b></h4>
+				</div>
+				<div class="modal-body">
+					<form role="form" id="changePasswordForm">
+						<div class="box-body">
+							<div class="form-group">
+								<label for="current_password">Current Password</label>
+								<input type="password" class="form-control" id="current_password">
+							</div>
+
+							<div class="form-group">
+								<label for="new_password">New Password</label>
+								<input type="password" class="form-control" id="new_password">
+							</div>
+
+							<div class="form-group">
+								<label for="confirm_new_password">Confirm New Password</label>
+								<input type="password" class="form-control" id="confirm_new_password">
+							</div>
+
+						</div>
+					</form>
+				</div><!-- body -->
+				<div class="modal-footer">
+					<div id="footer">
+						<div class="btn-group btn-group-justified" id="form-mode-buttons" role="group" >
+							<button type="button" id="clear_changepass" class="btn btn-default" style="width:49%">
+								<i class="fa fa-undo"></i>&nbsp; Clear
+							</button>
+							<button type="button" id="changepassword_submitbtn" class="btn btn-primary" data-key-method="ok" style="width:49%">
+								<i class="fa fa-save"></i>&nbsp; Save
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- modal -->
+
 	<footer class="main-footer">
 		<div class="pull-right hidden-xs">
 			<b>v1.0</b>
@@ -282,6 +333,10 @@
   $.widget.bridge('uibutton', $.ui.button);
   var baseurl = '<?php echo base_url(); ?>'+'index.php';
   var access_level = '<?php echo $_SESSION["rgc_access_level"]; ?>';
+  var userbranch = '<?php echo $_SESSION["rgc_branch_id"]; ?>';
+  // $("a#sign_out_btn").on("click", function(){
+	//   window.location = baseurl + "?out=1"
+  // });
 </script>
 <!-- Bootstrap 3.3.7 -->
 <script src="<?php echo base_url(); ?>assets/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
@@ -301,6 +356,7 @@
 <!-- AdminLTE for demo purposes -->
 <script src="<?php echo base_url(); ?>assets/dist/js/demo.js"></script>
 <!-- AdminLTE for demo purposes -->
+<script src="<?php echo base_url(); ?>assets/dist/js/app.js"></script>
 <script src="<?php echo base_url(); ?>assets/dist/js/select.min.js"></script>
 <script src="<?php echo base_url(); ?>assets/dist/js/weeklyview.js"></script>
 </body>

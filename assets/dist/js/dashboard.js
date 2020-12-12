@@ -97,14 +97,14 @@ $(document).ready(function(){
 		}
 	});
 
-	$.ajax({
-		method: "POST",
-		url: baseurl+"/dashboard/top_sales",
-		data: days_of_week,
-		success: function(res){
-
-		}
-	});
+	// $.ajax({
+	// 	method: "POST",
+	// 	url: baseurl+"/dashboard/top_sales",
+	// 	data: days_of_week,
+	// 	success: function(res){
+	//
+	// 	}
+	// });
 
 
 	// // Create the chart

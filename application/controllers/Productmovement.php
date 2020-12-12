@@ -84,7 +84,7 @@ class Productmovement extends CI_Controller {
 					$childrow["description"] = $row["description"];
 					$childrow["uom"] = $row["uom_abbr"];
 					$childrow["pid"] = $parent_id;
-					
+
 					if(array_key_exists($parent_id, $product))
 						array_push($product[$parent_id]["child"], $childrow);
 				}
@@ -151,7 +151,6 @@ class Productmovement extends CI_Controller {
 
         //ACTUAL - POS SOLD = DISCREPANCY
         foreach($productList as $ind => $row) {
-        	//print_r($csv_data);
 			if (array_key_exists($row["id"], $csv_data)) {
 				$csv_data[$row["id"]]["qty"];
 			}

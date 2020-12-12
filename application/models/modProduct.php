@@ -107,7 +107,7 @@ class ModProduct extends CI_Model {
 
         if ($this->db->insert('product', $data)) {
             //$result_row = $this->db->query("SELECT LAST_INSERT_ID() AS `id`")->result_object();
-            $result["id"] = $this->db->insert_id();
+            $result["id"] = $param["id"];
             $result["success"] = true;
         } else {
             $result["success"] = false;

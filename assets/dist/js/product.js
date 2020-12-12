@@ -133,7 +133,7 @@ $(document).ready(function(){
 		var compositionlist = $("table#kit_composition_table").find("tr.compprod_tr.haschanges");
 		$.each(compositionlist, function(ind, row){
 			var id = $(row).attr("id");
-			var parent_id = $(row).find("td.comprod_id").html();
+			var product_id = $(row).find("td.comprod_id").html();
 			var quantity = $(row).find("td.comprod_qty").html();
 
 			var mode = "";
@@ -148,8 +148,8 @@ $(document).ready(function(){
 				mode = "deleted";
 			}
 
-			var rowdata = {parent_id, quantity, mode, id};
-			productkit[parent_id] = rowdata;
+			var rowdata = {product_id, quantity, mode, id};
+			productkit[product_id] = rowdata;
 			// productkit.push(rowdata);
 		});
 

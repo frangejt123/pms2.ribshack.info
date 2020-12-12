@@ -506,7 +506,7 @@ $(document).ready(function(){
         }
 
         //check if period exist
-		var datedata = {'date': pms_date};
+		var datedata = {'date': pms_date, 'branch_id': userbranch};
 		$.ajax({
 			url: baseurl + "/productmovement/checkperiod",
 			type: 'POST',

@@ -55,7 +55,7 @@
 					<!-- User Account: style can be found in dropdown.less -->
 					<li class="dropdown user user-menu">
 						<a href="<?php echo base_url(); ?>assets/#" class="dropdown-toggle" data-toggle="dropdown">
-							<span class="hidden-xs">USER</span>
+							<span class="hidden-xs"><?php echo strtoupper($_SESSION["rgc_firstname"]." ".$_SESSION["rgc_lastname"]); ?></span>
 						</a>
 						<ul class="dropdown-menu">
 							<!-- Menu Footer-->

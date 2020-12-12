@@ -85,6 +85,7 @@ class Dashboard extends CI_Controller {
 
 	public function productContribution(){
 		$this->load->model('modProductMovement', "", TRUE);
+		$this->load->model('modKit', "", TRUE);
 		$param = $this->input->post(NULL, "true");
 
 		$dateparam["datefrom"] = $param["date"][0];
@@ -101,37 +102,78 @@ class Dashboard extends CI_Controller {
 
 		$not_allowedview = [];
 
+		$raw_kit_composition = $this->modKit->getAll(null)->result_array();
+		$kit_composition = array();
+
+		foreach($raw_kit_composition as $ind => $row){
+//			$kit_composition[$row["product_id"]]["parent_id"] = $row["parent_id"];
+//			$kit_composition[$row["product_id"]]["cq"] = $row["quantity"];
+			$pdata = array(
+				"parent_id" => $row["parent_id"],
+				"cq" => $row["quantity"]
+			);
+			if(array_key_exists($row["product_id"], $kit_composition)){
+				array_push($kit_composition[$row["product_id"]], $pdata);
+			}else{
+				$kit_composition[$row["product_id"]] = array($pdata);
+			}
+		}
+
+//		print_r($kit_composition);
 		foreach($pms as $ind => $row){
 			$price = $row["price"];
 			if(strpos($row["product_id"], 'SC')) {
 				$price = number_format(($row["price"] * 0.8) / 1.12, 3)	;
 			};
+
 			$productprice[$row["product_id"]] = $price;
 			$description[$row["product_id"]] = $row["description"];
-			$pos_total = $row["pos_total"] * $row["cq"];
+			//$pos_total = $row["pos_total"] * $row["cq"];
 
-			if(!is_null($row["parent_id"]) || $row["parent_id"] != "") {
-				if(array_key_exists($row["parent_id"], $children)){
-					if(array_key_exists($row["product_id"], $children[$row["parent_id"]])){
-						$children[$row["parent_id"]][$row["product_id"]] += $pos_total;
+			if(array_key_exists($row["product_id"], $kit_composition)) {
+				foreach ($kit_composition[$row["product_id"]] as $i => $r) {
+					$pos_total = $row["pos_total"] * $r["cq"];
+					if(array_key_exists($r["parent_id"], $children)) {
+						if (array_key_exists($row["product_id"], $children[$r["parent_id"]])) {
+							$children[$r["parent_id"]][$row["product_id"]] += $pos_total;
+						} else {
+							$children[$r["parent_id"]][$row["product_id"]] = $pos_total;
+						}
 					}else{
-						$children[$row["parent_id"]][$row["product_id"]] = $pos_total;
+						$children[$r["parent_id"]] = array();
 					}
-				}else{
-					$children[$row["parent_id"]][$row["product_id"]] = $pos_total;
 				}
 			}else{
 				if (array_key_exists($row["product_id"], $datedataarray)) {
-					$datedataarray[$row["product_id"]] += $pos_total;
+					$datedataarray[$row["product_id"]] += $row["pos_total"];
 				} else {
-					$datedataarray[$row["product_id"]] = $pos_total;
+					$datedataarray[$row["product_id"]] = $row["pos_total"];
 				}
 			}
+
+
+//			if(!is_null($row["parent_id"]) || $row["parent_id"] != "") {
+//				if(array_key_exists($row["parent_id"], $children)){
+//					if(array_key_exists($row["product_id"], $children[$row["parent_id"]])){
+//						$children[$row["parent_id"]][$row["product_id"]] += $pos_total;
+//					}else{
+//						$children[$row["parent_id"]][$row["product_id"]] = $pos_total;
+//					}
+//				}else{
+//					$children[$row["parent_id"]][$row["product_id"]] = $pos_total;
+//				}
+//			}else{
+//				if (array_key_exists($row["product_id"], $datedataarray)) {
+//					$datedataarray[$row["product_id"]] += $pos_total;
+//				} else {
+//					$datedataarray[$row["product_id"]] = $pos_total;
+//				}
+//			}
 
 			if(!$row["allow_weekview"]) {
 				array_push($not_allowedview, $row["product_id"]);
 			}
-
+//
 			if (array_key_exists($row["product_id"], $realqty)) {
 				$realqty[$row["product_id"]] += $row["pos_total"];
 			} else {
@@ -162,13 +204,10 @@ class Dashboard extends CI_Controller {
 			}
 		}
 
-
 		$totalsales = 0;
 		foreach($datedataarray as $ind => $row){
 			$totalsales += $row;
 		}
-
-
 
 		$response = [];
 		$response["product_cont"] = [];
@@ -186,7 +225,8 @@ class Dashboard extends CI_Controller {
 
 				$res = array(
 					"name" => $description[$ind],
-					"y" => floatval($contribution)
+					"y" => floatval($contribution),
+					"color" => '#'.$this->random_color_part().$this->random_color_part().$this->random_color_part() // generate random color
 				);
 
 				array_push($response["product_cont"], $res);
@@ -195,6 +235,10 @@ class Dashboard extends CI_Controller {
 		}
 
 		echo json_encode($response);
+	}
+
+	private function random_color_part() {
+		return str_pad( dechex( mt_rand( 0, 255 ) ), 2, '0', STR_PAD_LEFT);
 	}
 
 	public function daily_sales(){

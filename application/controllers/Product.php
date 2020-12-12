@@ -48,14 +48,15 @@ class Product extends CI_Controller {
 		$this->load->model('modKit', "", TRUE);
         $param = $this->input->post(NULL, "true");
 
+		$result = $this->modProduct->insert($param);
+
         if(isset($param["product_kit"]))
 			if(count($param["product_kit"]) > 0){
 				foreach($param["product_kit"] as $ind => $row){
+					$row["parent_id"] = $result["id"];
 					$this->modKit->insert($row);
 				}
 			}
-
-        $result = $this->modProduct->insert($param);
 
         echo json_encode($result);
 	}
