@@ -91,6 +91,9 @@ class Dashboard extends CI_Controller {
 		$dateparam["datefrom"] = $param["date"][0];
 		$dateparam["dateto"] = $param["date"][6];
 
+//		$dateparam["datefrom"] = "2020-12-23";
+//		$dateparam["dateto"] = "2020-12-27";
+
 		$pms = $this->modProductMovement->getTotal($dateparam)->result_array();
 
 		$datedataarray = [];
@@ -205,6 +208,8 @@ class Dashboard extends CI_Controller {
 		}
 
 		$totalsales = 0;
+//		print_r($datedataarray);
+//		return;
 		foreach($datedataarray as $ind => $row){
 			$totalsales += $row;
 		}
@@ -247,6 +252,9 @@ class Dashboard extends CI_Controller {
 
 		$dateparam["datefrom"] = $param["date"][0];
 		$dateparam["dateto"] = $param["date"][6];
+
+//		$dateparam["datefrom"] = "2020-12-23";
+//		$dateparam["dateto"] = "2020-12-27";
 
 		$pms = $this->modProductMovement->getTotal($dateparam)->result_array();
 

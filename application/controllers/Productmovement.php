@@ -165,6 +165,7 @@ class Productmovement extends CI_Controller {
 			$r["pos3"] = 0;
 			$r["pos4"] = 0;
 			$r["pos5"] = 0;
+			$r["price"] = $row["price"];
 			$r["pos_total"] = 0;
 			$r["beginning"] = isset($lastactual["actual"]) ? $lastactual["actual"] : 0;
 			$r["ending"] = 0;

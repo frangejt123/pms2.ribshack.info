@@ -16,6 +16,7 @@ class ModProductmovement extends CI_Model {
 				"pos3" => "product_movement.pos3",
 				"pos4" => "product_movement.pos4",
 				"pos5" => "product_movement.pos5",
+				"price" => "product_movement.price",
 				"pos_total" => "product_movement.pos_total",
                 "beginning" => "product_movement.beginning",
                 "ending" => "product_movement.ending",
@@ -157,7 +158,7 @@ class ModProductmovement extends CI_Model {
 	}
 
 	function getTotal($param){
-		$this->db->select("product_id, price, SUM(pos_total) as pos_total, 
+		$this->db->select("product_id, product_movement.price, SUM(pos_total) as pos_total, 
 		period.date, product.description, product.allow_weekview");
 		$this->db->from("product_movement");
 		$this->db->join('period', 'period.id = product_movement.period_id');
@@ -171,10 +172,10 @@ class ModProductmovement extends CI_Model {
 		}
 		//$this->db->where('product.parent_id =', NULL);
 //		$this->db->where('product.allow_weekview =', '1');
+//		$this->db->where('product_movement.product_id LIKE', '%50034%');
+//		$this->db->or_where('product_movement.product_id LIKE', '%60001%');
 		$this->db->where('period.date >=', $param["datefrom"]);
 		$this->db->where('period.date <=', $param["dateto"]);
-		//$this->db->where('product_movement.product_id LIKE', '%50003%');
-		//$this->db->or_where('product_movement.product_id LIKE', '%60003%');
 		$this->db->order_by('product.description', 'ASC');
 		$query = $this->db->get();
 
@@ -202,13 +203,14 @@ class ModProductmovement extends CI_Model {
 			$this->db->where('period.branch_id =', $param["branch_id"]);
 		}
 		//$this->db->where('product.parent_id =', NULL);
-//		$this->db->where('product.allow_weekview =', '1');
+		//$this->db->where('product.allow_weekview =', '1');
 		$this->db->where('period.date >=', $param["datefrom"]);
 		$this->db->where('period.date <=', $param["dateto"]);
+//		$this->db->where('period.product_id LIKE "%50001%"');
+//		$this->db->or_where('period.product_id LIKE "%60002%"');
 		$this->db->order_by('product.description', 'ASC');
 		$query = $this->db->get();
 
 		return $query;
 	}
-    
 }

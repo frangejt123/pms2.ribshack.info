@@ -216,10 +216,6 @@ class Weekview extends CI_Controller {
 			$sortedperiod[$dateformat] = $row["sales"];
 		}
 
-//		foreach($datedataarray as $ind => $row){
-//			print_r($row['sales']);
-//		}
-
 		foreach($datedataarray as $ind => $row){
 			foreach ($row['date'] as $ind2 => $row2) {
 				if (isset($datatotal[$ind]))
@@ -246,6 +242,8 @@ class Weekview extends CI_Controller {
 				}
 			}
 		}
+//		print_r($datedataarray);
+//		return;
 
 		foreach($datedataarray as $ind => $row){
 			ksort($row['date']);
