@@ -84,26 +84,32 @@ class Dashboard extends CI_Controller {
 	}
 
 	public function productContribution(){
+		$this->load->model('modConversion', "", TRUE);
+		$this->load->model('modPeriod', "", TRUE);
 		$this->load->model('modProductMovement', "", TRUE);
 		$this->load->model('modKit', "", TRUE);
 		$param = $this->input->post(NULL, "true");
 
-		$dateparam["datefrom"] = $param["date"][0];
-		$dateparam["dateto"] = $param["date"][6];
+		$param["datefrom"] = $param["date"][0];
+		$param["dateto"] = $param["date"][6];
 
-//		$dateparam["datefrom"] = "2020-12-23";
-//		$dateparam["dateto"] = "2020-12-27";
+		$param["datefrom"] = "2021-01-01";
+		$param["dateto"] = "2021-01-07";
 
-		$pms = $this->modProductMovement->getTotal($dateparam)->result_array();
+		//$convertion = $this->modConversion->getAll($param)->result_array();
+		$pms = $this->modProductMovement->getTotal($param)->result_array();
+		$perioddata = $this->modPeriod->getSales($param)->result_array();
 
-		$datedataarray = [];
-		$description = [];
-		$productprice = [];
+		$period = new DatePeriod(
+			new DateTime($param["datefrom"]),
+			new DateInterval('P1D'),
+			new DateTime($param["dateto"]. ' 23:59:59')
+		);
 
-		$children = [];
-		$realqty = [];
+		$header = [];
 
-		$not_allowedview = [];
+		$totalRecords = $this->modConversion->getAll($param)->num_rows();
+		$totalRecordwithFilter = $totalRecords;
 
 		$raw_kit_composition = $this->modKit->getAll(null)->result_array();
 		$kit_composition = array();
@@ -113,6 +119,7 @@ class Dashboard extends CI_Controller {
 //			$kit_composition[$row["product_id"]]["cq"] = $row["quantity"];
 			$pdata = array(
 				"parent_id" => $row["parent_id"],
+				"parent_desc" => $row["description"],
 				"cq" => $row["quantity"]
 			);
 			if(array_key_exists($row["product_id"], $kit_composition)){
@@ -122,171 +129,65 @@ class Dashboard extends CI_Controller {
 			}
 		}
 
-//		print_r($kit_composition);
-		foreach($pms as $ind => $row){
-			$price = $row["price"];
-			if(strpos($row["product_id"], 'SC')) {
-				$price = number_format(($row["price"] * 0.8) / 1.12, 3)	;
-			};
-
-			$productprice[$row["product_id"]] = $price;
-			$description[$row["product_id"]] = $row["description"];
-			//$pos_total = $row["pos_total"] * $row["cq"];
-
-			if(array_key_exists($row["product_id"], $kit_composition)) {
-				foreach ($kit_composition[$row["product_id"]] as $i => $r) {
-					$pos_total = $row["pos_total"] * $r["cq"];
-					if(array_key_exists($r["parent_id"], $children)) {
-						if (array_key_exists($row["product_id"], $children[$r["parent_id"]])) {
-							$children[$r["parent_id"]][$row["product_id"]] += $pos_total;
-						} else {
-							$children[$r["parent_id"]][$row["product_id"]] = $pos_total;
-						}
-					}else{
-						$children[$r["parent_id"]] = array();
-					}
-				}
-			}else{
-				if (array_key_exists($row["product_id"], $datedataarray)) {
-					$datedataarray[$row["product_id"]] += $row["pos_total"];
-				} else {
-					$datedataarray[$row["product_id"]] = $row["pos_total"];
-				}
-			}
-
-
-//			if(!is_null($row["parent_id"]) || $row["parent_id"] != "") {
-//				if(array_key_exists($row["parent_id"], $children)){
-//					if(array_key_exists($row["product_id"], $children[$row["parent_id"]])){
-//						$children[$row["parent_id"]][$row["product_id"]] += $pos_total;
-//					}else{
-//						$children[$row["parent_id"]][$row["product_id"]] = $pos_total;
-//					}
-//				}else{
-//					$children[$row["parent_id"]][$row["product_id"]] = $pos_total;
-//				}
-//			}else{
-//				if (array_key_exists($row["product_id"], $datedataarray)) {
-//					$datedataarray[$row["product_id"]] += $pos_total;
-//				} else {
-//					$datedataarray[$row["product_id"]] = $pos_total;
-//				}
-//			}
-
-			if(!$row["allow_weekview"]) {
-				array_push($not_allowedview, $row["product_id"]);
-			}
-//
-			if (array_key_exists($row["product_id"], $realqty)) {
-				$realqty[$row["product_id"]] += $row["pos_total"];
-			} else {
-				$realqty[$row["product_id"]] = $row["pos_total"];
-			}
-		}
-
-		foreach($datedataarray as $ind => $row){
-			$totqty = $row;
-			if(array_key_exists($ind, $children)){
-				foreach($children[$ind] as $i => $r){
-					$totqty -= $r;
-				}
-			}
-
-			if(in_array($ind, $not_allowedview)) {
-				$totqty = 0;
-			}
-
-			$datedataarray[$ind] = ($totqty * $productprice[$ind]);
-		}
-
-		foreach($datedataarray as $ind => $row){
-			if(array_key_exists($ind, $children)){
-				foreach($children[$ind] as $i => $r){
-					$datedataarray[$ind] += ($realqty[$i] * $productprice[$i]);
-				}
-			}
-		}
-
-		$totalsales = 0;
-//		print_r($datedataarray);
-//		return;
-		foreach($datedataarray as $ind => $row){
-			$totalsales += $row;
-		}
-
-		$response = [];
-		$response["product_cont"] = [];
-		$response["total_sales"] = number_format($totalsales, 2);
-		$response["ave_sales"] = number_format(($totalsales / 7), 2);
-		$response["datefrom"] = date('F d, Y', strtotime($dateparam["datefrom"]));
-		$response["dateto"] = date('F d, Y', strtotime($dateparam["dateto"]));
-
-		foreach($datedataarray as $ind => $row){
-			$contribution =  number_format((($row / $totalsales ) * 100), 2);
-
-			if($contribution > 0){
-//				$response[$ind]["name"] = $description[$ind];
-//				$response[$ind]["y"] = $contribution;
-
-				$res = array(
-					"name" => $description[$ind],
-					"y" => floatval($contribution),
-					"color" => '#'.$this->random_color_part().$this->random_color_part().$this->random_color_part() // generate random color
-				);
-
-				array_push($response["product_cont"], $res);
-
-			}
-		}
-
-		echo json_encode($response);
-	}
-
-	private function random_color_part() {
-		return str_pad( dechex( mt_rand( 0, 255 ) ), 2, '0', STR_PAD_LEFT);
-	}
-
-	public function daily_sales(){
-		$this->load->model('modProductMovement', "", TRUE);
-		$param = $this->input->post(NULL, "true");
-
-		$dateparam["datefrom"] = $param["date"][0];
-		$dateparam["dateto"] = $param["date"][6];
-
-//		$dateparam["datefrom"] = "2020-12-23";
-//		$dateparam["dateto"] = "2020-12-27";
-
-		$pms = $this->modProductMovement->getTotal($dateparam)->result_array();
-
 		$datedataarray = [];
+
 		$childsum = [];
 		$children = [];
 
-		$period = new DatePeriod(
-			new DateTime($dateparam["datefrom"]),
-			new DateInterval('P1D'),
-			new DateTime($dateparam["dateto"]. ' 23:59:59')
-		);
+		$datecount = 0;
+		foreach ($period as $date) {
+			$datecount++;
+		}
+
+		$sortedperiod = [];
+		foreach($perioddata as $ind => $row){
+			$dateformat = date('Ymd', strtotime($row["date"]));
+			$sortedperiod[$dateformat] = $row["sales"];
+		}
 
 		foreach($pms as $ind => $row){
 			$datedataarray[$row["product_id"]]['desc'] = $row["description"];
-			$datedataarray[$row["product_id"]]['parent_id'] = $row["parent_id"];
-			$datedataarray[$row["product_id"]]['id'] = $row["product_id"];
+
+			$parent_id = null;
 			$dateformat = date('Ymd', strtotime($row["date"]));
+			$datedataarray[$row["product_id"]]['type'] = $row["type"];
 
-			$datedataarray[$row["product_id"]]['date'][$dateformat] = $row["pos_total"];
+			if(array_key_exists($row["product_id"], $kit_composition)){
+				foreach($kit_composition[$row["product_id"]] as $i => $r){
+					$parent_id = $r["parent_id"];
+					$parent_desc = $r["parent_desc"];
+					$cq = $r["cq"];
 
-			if(!is_null($row["parent_id"]) || $row["parent_id"] != ""){
-				if(array_key_exists($row["parent_id"].$dateformat, $childsum)){
-					$childsum[$row["parent_id"].$dateformat] += ($row["pos_total"] * $row["cq"]);
-				}else{
-					$childsum[$row["parent_id"].$dateformat] = ($row["pos_total"] * $row["cq"]);
+					$datedataarray[$row["product_id"]]['parent_id'] = $parent_id;
+					$datedataarray[$row["product_id"]]['parent_desc'] = $parent_desc;
+					$pms[$ind]['parent_id'] = $parent_id;
+
+					if(array_key_exists($parent_id.$dateformat, $childsum)){
+						$childsum[$parent_id.$dateformat] += ($row["pos_total"] * $cq);
+					}else{
+						$childsum[$parent_id.$dateformat] = ($row["pos_total"] * $cq);
+					}
+
+					$children[$parent_id][$row["product_id"]]['desc'] = $row["description"];
+					$children[$parent_id][$row["product_id"]][$dateformat] = $row["pos_total"];
 				}
-
-				$children[$row["parent_id"]][$row["product_id"]]['desc'] = $row["description"];
-				$children[$row["parent_id"]][$row["product_id"]][$dateformat] = $row["pos_total"];
+			}else{
+				$pms[$ind]['parent_id'] = null;
+				$datedataarray[$row["product_id"]]['parent_id'] = null;
+				$datedataarray[$row["product_id"]]['parent_desc'] = null;
 			}
+
+			$datedataarray[$row["product_id"]]['id'] = $row["product_id"];
+			$datedataarray[$row["product_id"]]['date'][$dateformat] = $row["pos_total"];
 		}
+
+		foreach($datedataarray as $ind => $row){
+			foreach($sortedperiod as $si => $sr){
+				if(!array_key_exists($si, $row["date"])){
+					$datedataarray[$ind]["date"][$si] = 0;
+				}
+			}
+		};
 
 		foreach($children as $ind => $row){
 			foreach($row as $ind2 => $row2){
@@ -300,7 +201,6 @@ class Dashboard extends CI_Controller {
 		}
 
 		foreach($pms as $ind => $row){
-
 			$total = $row["pos_total"];
 			$price = $row["price"];
 			$dateformat = date('Ymd', strtotime($row["date"]));
@@ -308,7 +208,11 @@ class Dashboard extends CI_Controller {
 			if(is_null($row["parent_id"]) || $row["parent_id"] == "") {
 				$childsumindex = $row["product_id"].$dateformat;
 				if(array_key_exists($childsumindex, $childsum)){
-					$total = $total - $childsum[$row["product_id"].$dateformat];
+					$total = $total - $childsum[$childsumindex];
+				}
+
+				if(!$row["allow_weekview"]){
+					$total = 0;
 				}
 			}
 
@@ -320,48 +224,206 @@ class Dashboard extends CI_Controller {
 			//$datedataarray[$row["product_id"]]['sales'][$row["product_id"]] = $total * $price;
 		}
 
+		$datatotal = [];
 		$salestotal = [];
+		$drilldown = [];
 
 		foreach($datedataarray as $ind => $row){
-			foreach ($row['sales'] as $ind2 => $row2) {
-				if (isset($salestotal[$ind2]))
-					$salestotal[$ind2] += $row2;
+			foreach ($row['date'] as $ind2 => $row2) {
+				if (isset($datatotal[$ind]))
+					$datatotal[$ind] += $row2;
 				else
-					$salestotal[$ind2] = $row2;
+					$datatotal[$ind] = $row2;
 
 			}
 
-			foreach ($period as $date) {
-				$dateStr = $date->format('Ymd');
-				if(!array_key_exists($dateStr, $row['date'])){
-					$salestotal[$dateStr] = 0;
+			foreach ($row['sales'] as $ind2 => $row2) {
+				if (isset($salestotal[$ind]))
+					$salestotal[$ind] += $row2;
+				else
+					$salestotal[$ind] = $row2;
+			}
+
+			ksort($row["sales"]);
+			if($row["parent_id"] == ""){
+				$drilldown[$ind] = array(
+					"name" => $row["desc"],
+					"id" => $row["id"],
+					"value" => $row["sales"]
+				);
+			}
+		}
+
+		foreach($datedataarray as $ind => $row){
+			if($row["parent_id"] !== ""){
+				foreach ($row['sales'] as $ind2 => $row2) {
+					if(array_key_exists($row["parent_id"], $drilldown)){
+						$drilldown[$row["parent_id"]]["value"][$ind2] += $row2;
+					}
 				}
 			}
 		}
 
-		$salesdata = [];
-
-		foreach($salestotal as $ind => $row){
-			$arr = array(
-				"date" => date("D - F j", strtotime($ind)),
-				"sales" => number_format($row, 2)
-			);
-
-			$salesdata[$ind] = $arr;
+		$drilldowndata = [];
+		foreach($drilldown as $ind => $row){
+			$d = [];
+			foreach($row["value"] as $ind2 => $row2){
+				$fdate = date('M d', strtotime($ind2));
+				array_push($d, array($fdate, $row2));
+			}
+			array_push($drilldowndata, array(
+				"name" => $row["name"],
+				"id" => $row["id"],
+				"data" => $d
+			));
 		}
 
-		echo json_encode($salesdata);
+		$data = [];
 
+		foreach($datedataarray as $ind => $row){
+			if(is_null($row["parent_id"]) || $row["parent_id"] == ""){
+//				$data[$ind] = [];
+//				$data[$ind]['desc'] = $row['desc'];
+//				$data[$ind]['week_total'] = $salestotal[$ind];
+				if(!array_key_exists($ind, $data)){
+					$data[$ind] = [];
+					$data[$ind]['week_total'] = $salestotal[$ind];
+				}else{
+					$data[$ind]['week_total'] += $salestotal[$ind];
+				}
+				$data[$ind]['desc'] = $row['desc'];
+				$data[$ind]['type'] = $row['type'];
+			}
+			else{
+				if(!array_key_exists($row["parent_id"], $data)){
+					$data[$row["parent_id"]] = [];
+					$data[$row["parent_id"]]['week_total'] = $salestotal[$ind];
+				}else {
+					$data[$row["parent_id"]]['week_total'] += $salestotal[$ind];
+				}
+				$data[$row["parent_id"]]['desc'] = $row['parent_desc'];
+				$data[$row["parent_id"]]['type'] = $row['type'];
+			}
+		}
+
+		ksort($sortedperiod);
+
+		$totalsales = 0;
+		$salesarr = [];
+
+		if(count($data) > 0) {
+			foreach ($sortedperiod as $ind => $row) {
+				$salesarr[$ind] = array(
+					"date" => date("D - F j", strtotime($ind)),
+					"sales" => number_format($row, 2)
+				);
+
+				$totalsales += $row;
+			}
+		}
+
+		ksort($salesarr);
+
+		$response = [];
+		$response["product_cont"] = [];
+		$response["total_sales"] = number_format($totalsales, 2);
+		$response["ave_sales"] = number_format(($totalsales / 7), 2);
+		$response["datefrom"] = date('F d, Y', strtotime($param["datefrom"]));
+		$response["dateto"] = date('F d, Y', strtotime($param["dateto"]));
+
+		$product_meal_arr = [];
+		$product_drinks_arr = [];
+
+		foreach($data as $ind => $row){
+			$contribution = 0;
+
+			if($totalsales > 0){
+//				if(preg_match('/\b50016\b/', $ind)){
+//					$row["week_total"] /= 250;
+//				}
+				$contribution = $row["week_total"];
+				//$contribution =  number_format((($row["week_total"] / $totalsales ) * 100), 2);
+			}
+
+			if(preg_match('/\bRICE\b/', strtoupper($row["desc"]))){
+				$contribution = 0;
+			}
+
+//			print_r($row["desc"]."==".$contribution."<br />");
+
+			if($contribution > 0){
+//				$response[$ind]["name"] = $description[$ind];
+//				$response[$ind]["y"] = $contribution;
+
+				$res = array(
+					"name" => $row["desc"],
+					"y" => $contribution,
+					//"color" => '#'.$this->random_color_part().$this->random_color_part().$this->random_color_part() // generate random color
+				);
+
+				if($row["type"] == 0){
+					$product_meal_arr[intval($contribution)] = array(
+						"name" => $row["desc"],
+						"y" => $contribution,
+						"drilldown" => strval($ind)
+					);
+				}else{
+					$product_drinks_arr[intval($contribution)] = array(
+						"name" => $row["desc"],
+						"y" => $contribution,
+						"drilldown" => strval($ind)
+					);
+				}
+
+				array_push($response["product_cont"], $res);
+
+			}
+		}
+
+		krsort($product_meal_arr);
+		krsort($product_drinks_arr);
+
+		$sortedmeal = [];
+		$sorteddrinks = [];
+
+		$mealcount = 0;
+		foreach($product_meal_arr as $ind => $row){
+			if($mealcount < 5)
+				array_push($sortedmeal, $row);
+			$mealcount++;
+		}
+
+		$drinkcount = 0;
+		foreach($product_drinks_arr as $ind => $row){
+			if($drinkcount < 5)
+				array_push($sorteddrinks, $row);
+			$drinkcount++;
+		}
+
+		$response["mealsales"] = $sortedmeal;
+		$response["drinksales"] = $sorteddrinks;
+
+		$response["salesarr"] = $salesarr;
+		$response["drilldown"] = $drilldowndata;
+
+		echo json_encode($response);
 	}
 
-	public function top_sales(){
-		$this->load->model('modProductMovement', "", TRUE);
-		$param = $this->input->post(NULL, "true");
-
-		$_param["datefrom"] = $param["date"][0];
-		$_param["dateto"] = $param["date"][6];
-
-		$top_sales_product = $this->modProductMovement->getTopSales($_param)->result_array();
-		print_r($top_sales_product);
+	private function random_color_part() {
+		return str_pad( dechex( mt_rand( 0, 255 ) ), 2, '0', STR_PAD_LEFT);
 	}
+
+//	public function top_sales(){
+//		$this->load->model('modProductMovement', "", TRUE);
+//		$param = $this->input->post(NULL, "true");
+//
+//		$_param["datefrom"] = $param["date"][0];
+//		$_param["dateto"] = $param["date"][6];
+//
+//		$_param["datefrom"] = "2021-01-01";
+//		$_param["dateto"] = "2021-01-07";
+//
+//		$top_sales_product = $this->modProductMovement->getTopSales($_param)->result_array();
+//		print_r($top_sales_product);
+//	}
 }

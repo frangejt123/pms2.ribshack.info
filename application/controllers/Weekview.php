@@ -95,6 +95,7 @@ class Weekview extends CI_Controller {
 		$param = $this->input->post(NULL, "true");
 
 		$draw = $param['draw'];
+
 		$param["datefrom"] = $param["startDate"];
 		$param["dateto"] = $param["endDate"];
 
@@ -135,6 +136,17 @@ class Weekview extends CI_Controller {
 		$childsum = [];
 		$children = [];
 
+		$datecount = 0;
+		foreach ($period as $date) {
+			$datecount++;
+		}
+
+		$sortedperiod = [];
+		foreach($perioddata as $ind => $row){
+			$dateformat = date('Ymd', strtotime($row["date"]));
+			$sortedperiod[$dateformat] = $row["sales"];
+		}
+
 		foreach($pms as $ind => $row){
 			$datedataarray[$row["product_id"]]['desc'] = $row["description"];
 
@@ -166,6 +178,14 @@ class Weekview extends CI_Controller {
 			$datedataarray[$row["product_id"]]['id'] = $row["product_id"];
 			$datedataarray[$row["product_id"]]['date'][$dateformat] = $row["pos_total"];
 		}
+
+		foreach($datedataarray as $ind => $row){
+			foreach($sortedperiod as $si => $sr){
+				if(!array_key_exists($si, $row["date"])){
+					$datedataarray[$ind]["date"][$si] = 0;
+				}
+			}
+		};
 
 		foreach($children as $ind => $row){
 			foreach($row as $ind2 => $row2){
@@ -205,17 +225,6 @@ class Weekview extends CI_Controller {
 		$datatotal = [];
 		$salestotal = [];
 
-		$datecount = 0;
-		foreach ($period as $date) {
-			$datecount++;
-		}
-
-		$sortedperiod = [];
-		foreach($perioddata as $ind => $row){
-			$dateformat = date('Ymd', strtotime($row["date"]));
-			$sortedperiod[$dateformat] = $row["sales"];
-		}
-
 		foreach($datedataarray as $ind => $row){
 			foreach ($row['date'] as $ind2 => $row2) {
 				if (isset($datatotal[$ind]))
@@ -242,8 +251,6 @@ class Weekview extends CI_Controller {
 				}
 			}
 		}
-//		print_r($datedataarray);
-//		return;
 
 		foreach($datedataarray as $ind => $row){
 			ksort($row['date']);

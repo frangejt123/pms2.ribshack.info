@@ -53,7 +53,7 @@ class Product extends CI_Controller {
         if(isset($param["product_kit"]))
 			if(count($param["product_kit"]) > 0){
 				foreach($param["product_kit"] as $ind => $row){
-					$row["parent_id"] = $result["id"];
+					$row["parent_id"] = $param["id"];
 					$this->modKit->insert($row);
 				}
 			}
@@ -71,6 +71,7 @@ class Product extends CI_Controller {
 				foreach($param["product_kit"] as $ind => $row){
 					if($row["mode"] == "new"){
 						unset($row["id"]);
+						$row["parent_id"] = $param["id"];
 						$this->modKit->insert($row);
 					}
 					if($row["mode"] == "edited"){
