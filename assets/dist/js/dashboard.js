@@ -85,9 +85,9 @@ $(document).ready(function(){
 			});
 
 			$("table#daily_sales_tbl tbody").html(tr);
-
-			generate_topsales_product(res["mealsales"], res["drilldown"]);
-			generate_topsales_drinks(res["drinksales"], res["drilldown"]);
+			var datetitle = res["datefrom"] + ' - ' + res["dateto"];
+			generate_topsales_product(res["mealsales"], res["drilldown"], datetitle);
+			generate_topsales_drinks(res["drinksales"], res["drilldown"], datetitle);
 		}
 	});
 
@@ -111,7 +111,7 @@ $(document).ready(function(){
 
 	// Create the chart
 
-	function generate_topsales_product(topsalesdata, drilldown){
+	function generate_topsales_product(topsalesdata, drilldown, datetitle){
 		Highcharts.chart('top-product-container', {
 			chart: {
 				type: 'column'
@@ -120,7 +120,7 @@ $(document).ready(function(){
 				text: 'Best Seller — Product'
 			},
 			subtitle: {
-				text: 'October 12, 2020 - October 18, 2020'
+				text: datetitle
 			},
 			accessibility: {
 				announceNewData: {
@@ -425,7 +425,7 @@ $(document).ready(function(){
 	}
 
 	// Create the chart
-	function generate_topsales_drinks(topsalesdata, drilldown) {
+	function generate_topsales_drinks(topsalesdata, drilldown, datetitle) {
 		Highcharts.chart('top-drinks-container', {
 			chart: {
 				type: 'column'
@@ -434,7 +434,7 @@ $(document).ready(function(){
 				text: 'Best Seller — Drinks'
 			},
 			subtitle: {
-				text: 'October 12, 2020 - October 18, 2020'
+				text: datetitle
 			},
 			accessibility: {
 				announceNewData: {

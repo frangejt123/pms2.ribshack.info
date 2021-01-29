@@ -93,8 +93,8 @@ class Dashboard extends CI_Controller {
 		$param["datefrom"] = $param["date"][0];
 		$param["dateto"] = $param["date"][6];
 
-		$param["datefrom"] = "2021-01-01";
-		$param["dateto"] = "2021-01-07";
+//		$param["datefrom"] = "2021-01-01";
+//		$param["dateto"] = "2021-01-07";
 
 		//$convertion = $this->modConversion->getAll($param)->result_array();
 		$pms = $this->modProductMovement->getTotal($param)->result_array();
